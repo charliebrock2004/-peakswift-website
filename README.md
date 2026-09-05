@@ -3,10 +3,10 @@
 The PeakSwift Studios portfolio site — a showcase for the websites PeakSwift
 has built, rather than a brochure about web design.
 
-Built with Next.js (App Router), TypeScript and Tailwind CSS v4. No animation
-library, no UI kit, no page builder: the whole page is 3.8 kB of its own
-JavaScript on top of the React runtime, and every section is statically
-rendered at build time.
+Built with Next.js 16 (App Router), React 19, TypeScript and Tailwind CSS v4.
+No animation library, no UI kit, no page builder — the scroll effects are a
+single IntersectionObserver and one transform. Every route is statically
+prerendered at build time, and the whole stylesheet is 8.7 kB gzipped.
 
 ---
 
@@ -24,7 +24,8 @@ npm run build && npm start   # production build
 ## Deploying
 
 Import the repository on Vercel. There is nothing to configure — Vercel detects
-Next.js, and every push to the default branch redeploys.
+Next.js, runs `npm ci` against the committed lockfile, and every push to the
+default branch redeploys.
 
 **One thing to set before launch:** open `lib/site.ts` and change `url` to the
 address the site is actually served from. It drives the canonical link, the
@@ -91,6 +92,24 @@ Write the `alt` text as a description of the screenshot for someone who cannot
 see it — it is read aloud, and it is the only description of the work they get.
 
 ---
+
+## Dependencies
+
+Everything is pinned to an exact version — no `^` ranges — so the build that
+passes locally is the build Vercel runs. `npm audit` reports **0
+vulnerabilities**.
+
+- **`engines.node: >=20.9.0`** — Next 16's floor, stated explicitly so Vercel
+  picks a compatible runtime instead of whatever its default happens to be.
+- **`pnpm.onlyBuiltDependencies`** — an allowlist naming the only two packages
+  here that ship native code (`@tailwindcss/oxide`, Tailwind's engine, and
+  `sharp`, behind `next/image`). Neither runs an install script at their
+  current versions, but if a package manager that blocks lifecycle scripts by
+  default is ever used, exactly those two are permitted and nothing else.
+
+When upgrading Tailwind, move `tailwindcss` and `@tailwindcss/postcss`
+together. A version mismatch between them fails the CSS build with a confusing
+`Missing field 'negated' on ScannerOptions.sources` error.
 
 ## How it's put together
 
