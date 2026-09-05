@@ -1,0 +1,67 @@
+const things = [
+  {
+    title: "Business websites",
+    copy: "The site a customer checks before they call. Services, proof, and an obvious way to get in touch.",
+  },
+  {
+    title: "Landing pages",
+    copy: "One page, one job. Built to load fast and turn a click into an enquiry.",
+  },
+  {
+    title: "Portfolio sites",
+    copy: "For trades and studios whose finished work is the strongest thing they own.",
+  },
+  {
+    title: "Custom web experiences",
+    copy: "Anything that needs building properly rather than assembling from parts.",
+  },
+];
+
+export function Build() {
+  return (
+    <section id="build" className="relative py-[var(--section-y)]">
+      <div className="shell">
+        <div className="grid gap-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+          <header className="lg:sticky lg:top-32 lg:self-start" data-reveal>
+            <p className="eyebrow">What I build</p>
+            <h2 className="display-2 mt-5">
+              Four things,
+              <br />
+              done properly.
+            </h2>
+            <p className="lede mt-5 max-w-[26rem]">
+              Every one designed and coded from scratch — responsive, quick to
+              load, and easy for you to keep up to date.
+            </p>
+          </header>
+
+          <ul className="m-0 grid list-none gap-px overflow-hidden rounded-2xl border border-line bg-line p-0 sm:grid-cols-2">
+            {things.map((thing, i) => (
+              <li
+                key={thing.title}
+                data-reveal
+                style={{ "--reveal-delay": `${i * 70}ms` } as React.CSSProperties}
+                className="group relative bg-base p-7 transition-colors duration-300 hover:bg-surface sm:p-8"
+              >
+                {/* Hairline that draws across the top on hover */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-[image:var(--gradient-brand)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100"
+                />
+                <span className="font-[family-name:var(--font-mono)] text-[0.68rem] tracking-[0.18em] text-faint">
+                  0{i + 1}
+                </span>
+                <h3 className="mt-4 font-[family-name:var(--font-display)] text-[1.25rem] font-semibold tracking-[-0.025em]">
+                  {thing.title}
+                </h3>
+                <p className="mt-2.5 text-[0.94rem] leading-[1.65] text-muted">
+                  {thing.copy}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
