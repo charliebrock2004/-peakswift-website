@@ -1,19 +1,19 @@
 const things = [
   {
-    title: "Business websites",
-    copy: "The site a customer checks before they call. Services, proof, and an obvious way to get in touch.",
-  },
-  {
-    title: "Landing pages",
-    copy: "One page, one job. Built to load fast and turn a click into an enquiry.",
+    title: "Enquiry sites",
+    copy: "For a trade that lives on the phone. A clear offer, proof of the work, and a way to get in touch that still works while someone is standing in the room.",
   },
   {
     title: "Portfolio sites",
-    copy: "For trades and studios whose finished work is the strongest thing they own.",
+    copy: "For a business whose finished work does the selling. Photography first, and a structure the owner can add to without breaking the design.",
   },
   {
-    title: "Custom web experiences",
-    copy: "Anything that needs building properly rather than assembling from parts.",
+    title: "Shops & ordering",
+    copy: "For a local business that sells something. Prices up front, a basket, delivery a customer can understand, and an order that actually reaches the owner.",
+  },
+  {
+    title: "Landing pages",
+    copy: "One page, one job. Built to load fast and turn a visit into a call, a form, or an order.",
   },
 ];
 

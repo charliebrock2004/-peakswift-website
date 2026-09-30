@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { site } from "@/lib/site";
+import { projects } from "@/lib/projects";
 
 export const alt = `${site.legalName} — modern websites for businesses`;
 export const size = { width: 1200, height: 630 };
@@ -78,8 +79,8 @@ export default async function OpengraphImage() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ width: 64, height: 3, background: "linear-gradient(90deg,#0ECEFB,#0380E3)", display: "flex" }} />
-          <span style={{ color: "#6b7490", fontSize: 19, letterSpacing: 3 }}>
-            WEEJOB JOINERY · BROCK CONTRACTS
+          <span style={{ color: "#6b7490", fontSize: 18, letterSpacing: 2 }}>
+            {projects.map((project) => project.name).join("  ·  ").toUpperCase()}
           </span>
         </div>
       </div>

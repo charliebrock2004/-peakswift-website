@@ -1,7 +1,20 @@
 import { projects, type Project } from "@/lib/projects";
 import { SiteMockup } from "@/components/ui/SiteMockup";
 
+const COUNT = [
+  "Zero",
+  "One",
+  "Two",
+  "Three",
+  "Four",
+  "Five",
+  "Six",
+] as const;
+
 export function Work() {
+  const n = projects.length;
+  const word = COUNT[n] ?? String(n);
+
   return (
     <section id="work" className="relative py-[var(--section-y)]">
       <div className="shell">
@@ -9,12 +22,13 @@ export function Work() {
         <header className="max-w-[42rem]" data-reveal>
           <p className="eyebrow">Featured work</p>
           <h2 className="display-2 mt-5">
-            Two businesses. Two sites. Both live.
+            {word} businesses. {word} sites. All live.
           </h2>
           <p className="lede mt-5">
-            Not mockups or concepts — these are running in production, taking
-            real enquiries. Scroll through either one below, or open it and
-            judge it properly.
+            Not mockups or concepts — these are running in production. One is
+            built to bring in enquiries, one to show finished work, one to take
+            orders. Scroll through any of them, or open it and judge it
+            properly.
           </p>
         </header>
       </div>
@@ -30,7 +44,7 @@ export function Work() {
 
 function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
   return (
-    <article className="relative">
+    <article className="relative" id={project.slug}>
       {/* A wash of the project's own accent, so each case study has its own
           temperature without introducing a second brand colour.
 
@@ -57,7 +71,7 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
             <div className="flex items-baseline gap-4">
               <span
                 className="font-[family-name:var(--font-display)] text-[clamp(2.6rem,6vw,4rem)] font-semibold leading-none tracking-[-0.05em]"
-                style={{ color: project.accent, opacity: 0.55 }}
+                style={{ color: project.accent, opacity: 0.85 }}
                 aria-hidden="true"
               >
                 {project.index}
@@ -71,6 +85,18 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
             <h3 className="display-3 mt-7">{project.name}</h3>
             <p className="mt-2 font-[family-name:var(--font-mono)] text-[0.72rem] uppercase tracking-[0.16em] text-faint">
               {project.client}
+            </p>
+            <p className="mt-4">
+              <span
+                className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.16em] text-text"
+              >
+                <span
+                  aria-hidden="true"
+                  className="size-1.5 rounded-full"
+                  style={{ background: project.accent }}
+                />
+                {project.purpose}
+              </span>
             </p>
 
             <p className="mt-6 text-[1.08rem] font-medium leading-[1.5] text-text">
@@ -136,7 +162,7 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
                 rel="noreferrer noopener"
                 className="btn btn-primary"
               >
-                Visit {project.name}
+                View live site
                 <svg
                   viewBox="0 0 24 24"
                   className="size-4"
@@ -148,17 +174,19 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
                   <path d="M7 17 17 7M9 7h8v8" />
                 </svg>
               </a>
-              <a
-                href={project.repo}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="btn btn-ghost"
-              >
-                <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
-                  <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
-                </svg>
-                Source code
-              </a>
+              {project.repo ? (
+                <a
+                  href={project.repo}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="btn btn-ghost"
+                >
+                  <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
+                    <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
+                  </svg>
+                  Source code
+                </a>
+              ) : null}
             </div>
           </div>
 

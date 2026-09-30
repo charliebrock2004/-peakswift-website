@@ -44,9 +44,9 @@ export function About() {
                 business instead of whatever template was closest.
               </p>
               <p>
-                Both of the sites above were built end to end that way — design,
-                copy structure, code, hosting and the guide for keeping them
-                current.
+                All three of the sites above were built end to end that way —
+                design, copy structure, code, hosting, and a plain way for the
+                owner to keep them current.
               </p>
             </div>
           </div>

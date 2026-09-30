@@ -9,16 +9,16 @@ export const site = {
   legalName: "PeakSwift Studios",
   tagline: "Websites that make your business look the part.",
   description:
-    "PeakSwift designs and builds modern, fast websites for businesses. See two real sites built end to end — WeeJob Joinery and Brock Contracts.",
+    "PeakSwift designs and builds modern, fast websites for businesses. Three live sites — WeeJob Joinery, Brock Contracts and Timber & Flame — each built around how that business actually works.",
 
   /* The address enquiries come to. Change this one line to change it sitewide.
      PLACEHOLDER: currently the Brock Contracts inbox — swap it for a PeakSwift
      address when there is one. */
   email: "brockcontracts@gmail.com",
 
-  /* Set this to the deployed origin before launch — it drives the canonical
-     URL, the Open Graph tags and the JSON-LD block. */
-  url: "https://peakswift.vercel.app",
+  /* The origin the site is actually served from. Drives the canonical URL,
+     Open Graph tags, sitemap.xml and the JSON-LD block. */
+  url: "https://peakswift-website-psi.vercel.app",
 
   location: "Crieff, Perthshire — working with clients anywhere",
 

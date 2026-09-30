@@ -1,9 +1,10 @@
 import { mailto } from "@/lib/site";
+import { projects } from "@/lib/projects";
 import { PeakLines } from "@/components/ui/PeakLines";
 import { HeroPreview } from "@/components/ui/HeroPreview";
 
 const facts = [
-  { value: "2", label: "Live client sites" },
+  { value: String(projects.length), label: "Live client sites" },
   { value: "100%", label: "Hand-built, no templates" },
   { value: "1:1", label: "You deal with me" },
 ];

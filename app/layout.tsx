@@ -41,6 +41,7 @@ export const metadata: Metadata = {
     "Perthshire",
     "Crieff",
     "Next.js developer",
+    "online ordering",
     "portfolio",
   ],
   alternates: { canonical: "/" },

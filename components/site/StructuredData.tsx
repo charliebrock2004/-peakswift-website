@@ -2,7 +2,7 @@ import { projects } from "@/lib/projects";
 import { site } from "@/lib/site";
 
 /**
- * Schema.org data for the studio and the two shipped projects, so search
+ * Schema.org data for the studio and every shipped project, so search
  * engines can tell what PeakSwift does and what it has built.
  */
 export function StructuredData() {
@@ -29,16 +29,17 @@ export function StructuredData() {
           "Web design",
           "Web development",
           "Responsive design",
+          "Online ordering",
           "Search engine optimisation",
         ],
         hasOfferCatalog: {
           "@type": "OfferCatalog",
           name: "Web design and development",
           itemListElement: [
-            "Business websites",
-            "Landing pages",
+            "Enquiry websites",
             "Portfolio websites",
-            "Custom web experiences",
+            "Online ordering websites",
+            "Landing pages",
           ].map((name) => ({
             "@type": "Offer",
             itemOffered: { "@type": "Service", name },

@@ -44,7 +44,7 @@ Contact address, navigation, location, social links, and the deployed URL.
 
 ```ts
 email: "brockcontracts@gmail.com",   // PLACEHOLDER — swap for the PeakSwift address
-url: "https://peakswift.vercel.app", // set this before launch
+url: "https://peakswift-website-psi.vercel.app", // the live origin — canonical, Open Graph, sitemap
 social: [],                          // add { label, href } and it appears in the footer
 ```
 
@@ -71,7 +71,7 @@ with the layout alternating automatically.
   stack: ["HTML", "CSS", "Vanilla JS", "Vercel"],
   year: "2026",
   live: "https://...",
-  repo: "https://github.com/...",
+  repo: "https://github.com/...", // omit if the repository is private
   accent: "#E0B871",        // tints that case study's glow, number and ticks
   shots: {
     desktop: { src: "/work/x-desktop.webp", width: 1440, height: 4500, alt: "..." },
