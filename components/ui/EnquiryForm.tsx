@@ -20,8 +20,7 @@ const labelFor = (slug: string) =>
  *
  * Because some visitors have no mail app set up, the address is always shown
  * underneath with a copy button — a mailto that silently does nothing is the
- * most common way an enquiry gets lost. With no address configured the form
- * still renders, but says so and cannot be sent.
+ * most common way an enquiry gets lost.
  */
 export function EnquiryForm({ email }: { email: string | null }) {
   const [choice, setChoice] = useState(DEFAULT);
@@ -78,16 +77,6 @@ export function EnquiryForm({ email }: { email: string | null }) {
 
   return (
     <div>
-      {email ? null : (
-        <p className="mb-6 rounded-lg border border-line-strong bg-white/[0.03] px-4 py-3 text-[0.88rem] leading-[1.55] text-muted">
-          <strong className="font-semibold text-text">
-            The enquiry form is on its way.
-          </strong>{" "}
-          A dedicated PeakSwift inbox is being set up, so enquiries can&apos;t
-          be sent just yet. Please check back shortly.
-        </p>
-      )}
-
       <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label htmlFor="enquiry-package" className="field-label">
@@ -161,7 +150,7 @@ export function EnquiryForm({ email }: { email: string | null }) {
           />
         </div>
         <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-          <button type="submit" className="btn btn-primary" disabled={!email}>
+          <button type="submit" className="btn btn-primary">
             Write my enquiry
             <svg
               viewBox="0 0 24 24"

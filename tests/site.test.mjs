@@ -339,3 +339,16 @@ test("structured data lists the package prices in GBP", () => {
     assert.equal(offer.priceCurrency, "GBP");
   }
 });
+
+/* --------------------------------------------------- live enquiry form --- */
+
+test("the enquiry address is the PeakSwift inbox and the form is live", () => {
+  assert.equal(configuredEmail, "peakswiftstudio@gmail.com");
+  for (const name of ["home", "pricing"]) {
+    const html = pages[name];
+    assert.doesNotMatch(html, /on its way|inbox is being set up|can(?:'|&#x27;)t be sent/i, `${name}: disabled-form message`);
+    const button = html.match(/<button[^>]*type="submit"[^>]*>/)?.[0] ?? "";
+    assert.ok(button && !/disabled/.test(button), `${name}: submit button is disabled`);
+    assert.ok(links(html).some((l) => l.href.startsWith("mailto:peakswiftstudio@gmail.com")), `${name}: no mailto link`);
+  }
+});

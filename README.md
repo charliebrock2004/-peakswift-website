@@ -49,7 +49,7 @@ touched to change the content.
 Contact address, navigation, location, social links, and the deployed URL.
 
 ```ts
-email: null,                         // set to the PeakSwift inbox, e.g. "hello@yourdomain"
+email: "peakswiftstudio@gmail.com",           // the PeakSwift inbox every enquiry goes to
 url: "https://peakswift-website-psi.vercel.app", // the live origin — canonical, Open Graph, sitemap
 social: [],                          // add { label, href } and it appears in the footer
 ```
@@ -59,10 +59,8 @@ social: [],                          // add { label, href } and it appears in th
 it. Every "Start a project" and "Let's build something" button links to the
 enquiry section (`/#contact`) rather than straight to a mail app.
 
-**It is deliberately `null` until there is a dedicated PeakSwift inbox.**
-While it is `null` the site renders no address and no `mailto:` link anywhere,
-and the enquiry panel says the form is on its way. Never point it at another
-business's inbox as a stand-in — `npm test` fails if it does.
+It is the PeakSwift inbox, `peakswiftstudio@gmail.com`. Never point it at another
+business's inbox — `npm test` fails if any Brock Contracts address appears.
 
 ### `lib/pricing.ts`
 

@@ -22,7 +22,7 @@ export const site = {
      Leave it null until there is a dedicated PeakSwift inbox. While it is
      null the site shows no address and no mailto link at all; it must never
      point at another business's inbox as a stand-in. */
-  email: null as string | null,
+  email: "peakswiftstudio@gmail.com" as string | null,
 
   /* The origin the site is actually served from. Drives the canonical URL,
      Open Graph tags, sitemap.xml and the JSON-LD block. */
