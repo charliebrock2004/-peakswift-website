@@ -5,6 +5,17 @@ import { projects } from "@/lib/projects";
 const linkClass =
   "link-underline text-[0.92rem] text-muted transition-colors duration-200 hover:text-text";
 
+const studioPages = [
+  { href: "/website-design-crieff", label: "Website design in Crieff" },
+  { href: "/website-design-perth", label: "Website design in Perth" },
+  {
+    href: "/website-design-perthshire",
+    label: "Website design across Perthshire",
+  },
+  { href: "/small-business-websites", label: "Small business websites" },
+  { href: "/website-redesign", label: "Website redesign" },
+] as const;
+
 export function Footer() {
   const email = mailto();
 
@@ -88,6 +99,19 @@ export function Footer() {
             </ul>
           </div>
         </div>
+
+        <nav aria-label="Services and places" className="mt-12 border-t border-line pt-8">
+          <h2 className="mono-label">For businesses</h2>
+          <ul className="mt-4 grid list-none gap-2.5 p-0 sm:grid-cols-2 lg:grid-cols-3">
+            {studioPages.map((item) => (
+              <li key={item.href}>
+                <a href={item.href} className={linkClass}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-line pt-7 sm:flex-row sm:items-center sm:justify-between">
           <p className="mono-label">

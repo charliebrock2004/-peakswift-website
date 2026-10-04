@@ -23,6 +23,7 @@ export function StructuredData() {
         logo: `${site.url}/brand/icon-512.png`,
         areaServed: [
           { "@type": "City", name: site.locality },
+          { "@type": "City", name: "Perth" },
           { "@type": "AdministrativeArea", name: site.region },
           { "@type": "Country", name: "United Kingdom" },
         ],

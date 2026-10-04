@@ -352,3 +352,76 @@ test("the enquiry address is the PeakSwift inbox and the form is live", () => {
     assert.ok(links(html).some((l) => l.href.startsWith("mailto:peakswiftstudio@gmail.com")), `${name}: no mailto link`);
   }
 });
+
+/* ------------------------------------------------ new indexable pages --- */
+
+const NEW_PATHS = [
+  "/website-design-crieff",
+  "/website-design-perth",
+  "/website-design-perthshire",
+  "/small-business-websites",
+  "/website-redesign",
+];
+
+test("new pages: html, one h1, unique titles, descriptions, canonicals and sitemap", () => {
+  const sitemap = read(built, "sitemap.xml.body");
+  const titles = [];
+  const homeIds = ids(pages.home);
+  const homeLinks = links(pages.home);
+
+  for (const path of NEW_PATHS) {
+    const file = `${path.slice(1)}.html`;
+    assert.ok(existsSync(join(built, file)), `missing built HTML for ${path}`);
+    const html = read(built, file);
+
+    const levels = [...html.matchAll(/<h([1-6])\b/g)].map((m) => Number(m[1]));
+    assert.equal(levels.filter((l) => l === 1).length, 1, `${path} should have one h1`);
+    levels.reduce((prev, level) => {
+      assert.ok(level <= prev + 1, `${path}: h${prev} followed by h${level}`);
+      return level;
+    }, 1);
+
+    const title = decode(html.match(/<title>([^<]+)<\/title>/)?.[1] ?? "");
+    const description = decode(
+      html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "",
+    );
+    assert.ok(title.length > 0 && title.length <= 65, `${path} title (${title.length}): ${title}`);
+    assert.ok(
+      description.length >= 70 && description.length <= 160,
+      `${path} description (${description.length}): ${description}`,
+    );
+
+    const canonicals = [...html.matchAll(/<link rel="canonical" href="([^"]+)"/g)].map((m) => m[1]);
+    assert.deepEqual(canonicals, [`${siteUrl}${path}`], `${path} canonical`);
+    assert.match(sitemap, new RegExp(`<loc>${siteUrl}${path}</loc>`));
+    assert.ok(
+      html.includes(`property="og:url" content="${siteUrl}${path}"`) ||
+        html.includes(`content="${siteUrl}${path}" property="og:url"`),
+      `${path} openGraph url`,
+    );
+
+    for (const { href, text } of links(html)) {
+      if (href.startsWith("/#")) {
+        assert.ok(homeIds.has(href.slice(2)), `${path}: "${text}" → ${href} has no target on /`);
+      } else if (href.startsWith("/") && !href.startsWith("//")) {
+        const route = href.split(/[?#]/)[0];
+        const target = route === "/" ? "index.html" : `${route.slice(1)}.html`;
+        assert.ok(existsSync(join(built, target)), `${path}: "${text}" → ${href} missing ${target}`);
+      }
+    }
+
+    const fromHome = homeLinks.find((link) => link.href === path);
+    assert.ok(fromHome, `homepage does not link to ${path}`);
+    assert.ok(fromHome.text.length > 12, `anchor for ${path} is not descriptive: "${fromHome.text}"`);
+    titles.push(title);
+  }
+
+  assert.equal(new Set(titles).size, NEW_PATHS.length, `titles collide: ${titles.join(" | ")}`);
+
+  const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  assert.deepEqual(
+    [...locs].sort(),
+    [siteUrl, `${siteUrl}/pricing`, ...NEW_PATHS.map((path) => `${siteUrl}${path}`)].sort(),
+  );
+  assert.doesNotMatch(sitemap, /<loc>[^<]*(?:404|not-found)[^<]*<\/loc>/);
+});
