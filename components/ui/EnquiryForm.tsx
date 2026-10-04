@@ -1,29 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mailto } from "@/lib/site";
+import { enquiryOptions, enquirySlugs } from "@/lib/pricing";
+import { CHOOSE_EVENT } from "@/components/ui/ChooseLink";
 
-const needs = [
-  "Enquiry site",
-  "Portfolio site",
-  "Shop or online ordering",
-  "Landing page",
-  "Redesign of a current site",
-  "Not sure yet",
-];
+const DEFAULT = "not-sure";
+const labelFor = (slug: string) =>
+  enquiryOptions.flatMap((g) => g.items).find((i) => i.slug === slug)?.label ??
+  "";
 
 /**
  * The enquiry form. There is no server behind it: it writes the email for the
  * visitor and opens it in their own mail app, so nothing is stored and there
  * is no inbox other than the configured one that could ever receive it.
  *
+ * The package/service list comes from lib/pricing.ts, and a "Choose …" button
+ * anywhere on the page preselects it (via ?package= or the choose event).
+ *
  * Because some visitors have no mail app set up, the address is always shown
  * underneath with a copy button — a mailto that silently does nothing is the
- * most common way an enquiry gets lost.
+ * most common way an enquiry gets lost. With no address configured the form
+ * still renders, but says so and cannot be sent.
  */
-export function EnquiryForm({ email }: { email: string }) {
+export function EnquiryForm({ email }: { email: string | null }) {
+  const [choice, setChoice] = useState(DEFAULT);
   const [sent, setSent] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  /* Preselect from the URL on load, and from any "Choose …" click after. */
+  useEffect(() => {
+    const pick = (slug: string | null) => {
+      if (slug && enquirySlugs.includes(slug)) setChoice(slug);
+    };
+    pick(new URLSearchParams(window.location.search).get("package"));
+    const onChoose = (e: Event) => pick((e as CustomEvent<string>).detail);
+    window.addEventListener(CHOOSE_EVENT, onChoose);
+    return () => window.removeEventListener(CHOOSE_EVENT, onChoose);
+  }, []);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -32,20 +46,27 @@ export function EnquiryForm({ email }: { email: string }) {
 
     const name = get("name");
     const business = get("business");
+    const selected = labelFor(choice);
     const details = [
       `Name: ${name}`,
+      `Email: ${get("email")}`,
       business ? `Business: ${business}` : "",
-      `Looking for: ${get("need")}`,
+      `Interested in: ${selected}`,
     ].filter(Boolean);
     const body = `${details.join("\n")}\n\n${get("message")}`;
 
-    const href = mailto(`Website enquiry — ${business || name}`, body);
+    const subject =
+      choice === DEFAULT
+        ? `Website enquiry — ${business || name}`
+        : `Website enquiry — ${selected} — ${business || name}`;
+    const href = mailto(subject, body);
     if (!href) return;
     window.location.href = href;
     setSent(true);
   }
 
   async function copy() {
+    if (!email) return;
     try {
       await navigator.clipboard.writeText(email);
       setCopied(true);
@@ -57,7 +78,39 @@ export function EnquiryForm({ email }: { email: string }) {
 
   return (
     <div>
+      {email ? null : (
+        <p className="mb-6 rounded-lg border border-line-strong bg-white/[0.03] px-4 py-3 text-[0.88rem] leading-[1.55] text-muted">
+          <strong className="font-semibold text-text">
+            The enquiry form is on its way.
+          </strong>{" "}
+          A dedicated PeakSwift inbox is being set up, so enquiries can&apos;t
+          be sent just yet. Please check back shortly.
+        </p>
+      )}
+
       <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <label htmlFor="enquiry-package" className="field-label">
+            What are you interested in?
+          </label>
+          <select
+            id="enquiry-package"
+            name="package"
+            className="field"
+            value={choice}
+            onChange={(e) => setChoice(e.target.value)}
+          >
+            {enquiryOptions.map((group) => (
+              <optgroup key={group.group} label={group.group}>
+                {group.items.map((item) => (
+                  <option key={item.slug} value={item.slug}>
+                    {item.label}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </div>
         <div>
           <label htmlFor="enquiry-name" className="field-label">
             Your name
@@ -71,6 +124,19 @@ export function EnquiryForm({ email }: { email: string }) {
           />
         </div>
         <div>
+          <label htmlFor="enquiry-email" className="field-label">
+            Your email
+          </label>
+          <input
+            id="enquiry-email"
+            name="email"
+            type="email"
+            className="field"
+            autoComplete="email"
+            required
+          />
+        </div>
+        <div className="sm:col-span-2">
           <label htmlFor="enquiry-business" className="field-label">
             Business name{" "}
             <span className="font-normal text-faint">(optional)</span>
@@ -83,34 +149,19 @@ export function EnquiryForm({ email }: { email: string }) {
           />
         </div>
         <div className="sm:col-span-2">
-          <label htmlFor="enquiry-need" className="field-label">
-            What do you need?
-          </label>
-          <select
-            id="enquiry-need"
-            name="need"
-            className="field"
-            defaultValue={needs[0]}
-          >
-            {needs.map((need) => (
-              <option key={need}>{need}</option>
-            ))}
-          </select>
-        </div>
-        <div className="sm:col-span-2">
           <label htmlFor="enquiry-message" className="field-label">
-            Tell me about the business
+            What do you need?
           </label>
           <textarea
             id="enquiry-message"
             name="message"
             className="field"
             required
-            placeholder="What you do, where you are, and what the website needs to achieve."
+            placeholder="A few lines on what your business does, where you are, and what the website needs to achieve."
           />
         </div>
         <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary" disabled={!email}>
             Write my enquiry
             <svg
               viewBox="0 0 24 24"
@@ -139,22 +190,24 @@ export function EnquiryForm({ email }: { email: string }) {
           : ""}
       </p>
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-6">
-        <span className="mono-label">Or email directly</span>
-        <a
-          href={mailto() ?? undefined}
-          className="link-underline text-[0.95rem] font-medium text-text"
-        >
-          {email}
-        </a>
-        <button
-          type="button"
-          onClick={copy}
-          className="mono-label rounded-full border border-line px-3 py-1.5 transition-colors duration-200 hover:border-line-strong hover:text-text"
-        >
-          <span aria-live="polite">{copied ? "Copied" : "Copy"}</span>
-        </button>
-      </div>
+      {email ? (
+        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-6">
+          <span className="mono-label">Or email directly</span>
+          <a
+            href={mailto() ?? undefined}
+            className="link-underline break-all text-[0.95rem] font-medium text-text"
+          >
+            {email}
+          </a>
+          <button
+            type="button"
+            onClick={copy}
+            className="mono-label rounded-full border border-line px-3 py-1.5 transition-colors duration-200 hover:border-line-strong hover:text-text"
+          >
+            <span aria-live="polite">{copied ? "Copied" : "Copy"}</span>
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

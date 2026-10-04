@@ -4,6 +4,8 @@
  * Change it here and it changes everywhere on the site.
  */
 
+import { lowestPackagePrice } from "@/lib/pricing";
+
 export const site = {
   name: "PeakSwift",
   legalName: "PeakSwift Studios",
@@ -11,7 +13,7 @@ export const site = {
   /* The <title> on the home page: what a searcher needs to see in one line. */
   title: "PeakSwift Studios — Web Design in Crieff & Perthshire",
   description:
-    "Fast, hand-built websites for local businesses, designed and coded from scratch by a one-person studio in Crieff, Perthshire. See three live client sites.",
+    `Affordable, hand-built websites for small businesses and tradespeople from £${lowestPackagePrice}. A web design studio in Crieff, Perthshire, working across the UK.`,
 
   /* The address enquiries come to. Every "Start a project" and "Let's build
      something" button, the enquiry form, the footer and the structured data
@@ -39,6 +41,7 @@ export const site = {
 export const nav = [
   { label: "Work", href: "/#work" },
   { label: "Services", href: "/#services" },
+  { label: "Pricing", href: "/#pricing" },
   { label: "Process", href: "/#process" },
   { label: "About", href: "/#about" },
   { label: "Contact", href: "/#contact" },

@@ -9,7 +9,7 @@ const steps = [
   },
   {
     title: "An honest answer and a price",
-    copy: "I come back to you directly: whether I can help, what it would take, and what it would cost. You know the price before anything is built.",
+    copy: "I come back to you directly: whether I can help, which package fits, and what it would cost. You know the price before anything is built, and a 50% deposit secures your project.",
   },
   {
     title: "Designed and built from scratch",
@@ -17,7 +17,7 @@ const steps = [
   },
   {
     title: "Launched, and yours to keep",
-    copy: "The site goes live on fast hosting, the code lives in your repository, and you get a plain-English guide to keeping it up to date.",
+    copy: "The remaining balance is due before launch. The site then goes live, the code lives in your repository, and you get a plain-English guide to keeping it up to date.",
   },
 ];
 
@@ -39,8 +39,8 @@ export function Process() {
             </h2>
           </div>
           <p className="lede max-w-[24rem] lg:text-right">
-            Every project is quoted on its own. No packages to squeeze into, and
-            no surprises after you&apos;ve agreed.
+            Clear packages to start from, a confirmed price before any work
+            begins, and no surprises after you&apos;ve agreed.
           </p>
         </header>
 

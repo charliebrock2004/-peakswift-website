@@ -31,6 +31,11 @@ export function Footer() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a href="/pricing" className={linkClass}>
+                  Prices &amp; care plans
+                </a>
+              </li>
             </ul>
           </nav>
 

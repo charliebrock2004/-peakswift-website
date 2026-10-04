@@ -3,6 +3,7 @@ import { EnquiryForm } from "@/components/ui/EnquiryForm";
 
 const include = [
   "What the business does, and where",
+  "Which package or service you have in mind, if you know",
   "What the site needs to do — enquiries, show work, take orders",
   "Your current site, if there is one",
   "Any date you are working towards",
@@ -63,22 +64,7 @@ export function Contact() {
 
             {/* ------------------------------------------------- the form -- */}
             <div className="rounded-xl border border-line bg-base/70 p-5 sm:p-8">
-              {site.email ? (
-                <EnquiryForm email={site.email} />
-              ) : (
-                /* No PeakSwift inbox is configured yet (lib/site.ts). Say so
-                   plainly rather than show a form that cannot deliver. */
-                <div className="flex h-full flex-col justify-center gap-4 py-6 text-center">
-                  <p className="mono-label">Enquiries</p>
-                  <p className="font-[family-name:var(--font-display)] text-[1.35rem] font-semibold tracking-[-0.025em]">
-                    The enquiry form is on its way.
-                  </p>
-                  <p className="mx-auto max-w-[24rem] text-[0.95rem] leading-[1.65] text-muted">
-                    A dedicated PeakSwift inbox is being set up. Please check
-                    back shortly.
-                  </p>
-                </div>
-              )}
+              <EnquiryForm email={site.email} />
             </div>
           </div>
         </div>

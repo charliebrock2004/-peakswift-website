@@ -1,5 +1,6 @@
 import { projects } from "@/lib/projects";
 import { site } from "@/lib/site";
+import { carePlans, extras, packages } from "@/lib/pricing";
 
 /**
  * Schema.org data for the studio and every shipped project, so search
@@ -40,16 +41,42 @@ export function StructuredData() {
         ],
         hasOfferCatalog: {
           "@type": "OfferCatalog",
-          name: "Web design and development",
+          name: "Website design packages and services",
+          url: `${site.url}/pricing`,
           itemListElement: [
-            "Enquiry websites",
-            "Portfolio websites",
-            "Online ordering websites",
-            "Landing pages",
-          ].map((name) => ({
-            "@type": "Offer",
-            itemOffered: { "@type": "Service", name },
-          })),
+            ...packages.map((p) => ({
+              "@type": "Offer",
+              name: p.name,
+              description: p.subtitle,
+              price: p.price,
+              priceCurrency: "GBP",
+              itemOffered: { "@type": "Service", name: p.name },
+            })),
+            ...extras.map((e) => ({
+              "@type": "Offer",
+              name: e.name,
+              /* "From" prices are a minimum, not a fixed price */
+              priceSpecification: {
+                "@type": "UnitPriceSpecification",
+                priceCurrency: "GBP",
+                [e.from ? "minPrice" : "price"]: e.price,
+                ...(e.unit === "month" ? { unitText: "MONTH" } : {}),
+                ...(e.unit === "each" ? { unitText: "PAGE" } : {}),
+              },
+              itemOffered: { "@type": "Service", name: e.name },
+            })),
+            ...carePlans.map((c) => ({
+              "@type": "Offer",
+              name: c.name,
+              priceSpecification: {
+                "@type": "UnitPriceSpecification",
+                price: c.price,
+                priceCurrency: "GBP",
+                unitText: "MONTH",
+              },
+              itemOffered: { "@type": "Service", name: `Website care — ${c.name}` },
+            })),
+          ],
         },
       },
       {

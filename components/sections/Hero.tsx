@@ -1,11 +1,12 @@
 import { contactHref, site } from "@/lib/site";
 import { projects } from "@/lib/projects";
+import { gbp, lowestPackagePrice } from "@/lib/pricing";
 import { PeakLines } from "@/components/ui/PeakLines";
 import { HeroPreview } from "@/components/ui/HeroPreview";
 
 const facts = [
+  { value: `From ${gbp(lowestPackagePrice)}`, label: "Website packages" },
   { value: String(projects.length), label: "Live client sites" },
-  { value: "100%", label: "Hand-built, no templates" },
   { value: "1:1", label: "You deal with me" },
 ];
 
@@ -35,7 +36,7 @@ export function Hero() {
             style={{ "--rise-delay": "80ms" } as React.CSSProperties}
           >
             <span>
-              Web design &amp; development{" "}
+              Small business web design{" "}
               <span className="whitespace-nowrap">
                 · {site.locality}, {site.region}
               </span>
@@ -54,10 +55,10 @@ export function Hero() {
             className="lede rise mt-7 max-w-[34rem]"
             style={{ "--rise-delay": "300ms" } as React.CSSProperties}
           >
-            PeakSwift is a one-person studio designing and building fast, modern
-            websites for local businesses. Every site is written from scratch,
-            not dragged out of a template — and you deal with the person
-            building it.
+            PeakSwift is a one-person web design studio building fast, modern
+            websites for small businesses, sole traders and tradespeople across
+            the UK. Every site is written from scratch, not dragged out of a
+            template — at a price a small business can plan for.
           </p>
 
           <div
@@ -77,7 +78,13 @@ export function Hero() {
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
             </a>
-            <a href="#work" className="btn btn-ghost">
+            <a href="#pricing" className="btn btn-ghost">
+              View pricing
+            </a>
+            <a
+              href="#work"
+              className="ml-1 inline-flex min-h-[3rem] items-center gap-2 text-[0.95rem] font-semibold text-muted transition-colors duration-200 hover:text-text"
+            >
               See the work
               <svg
                 viewBox="0 0 24 24"

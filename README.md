@@ -64,6 +64,19 @@ While it is `null` the site renders no address and no `mailto:` link anywhere,
 and the enquiry panel says the form is on its way. Never point it at another
 business's inbox as a stand-in — `npm test` fails if it does.
 
+### `lib/pricing.ts`
+
+Every price and pricing condition on the site: the three website packages,
+the additional services, the monthly care plans, the introductory-pricing
+notice and the terms line. The home page pricing section, the `/pricing` page,
+the enquiry form's package list and the structured data all read from it, so
+a price changes in one place. `tests/site.test.mjs` holds the agreed prices
+too, so a change that wasn't meant to happen fails `npm test`.
+
+Every "Choose …" button links to `?package=<slug>#contact` on its own page,
+which preselects that option (with its price) in the enquiry form — no page
+reload, and the link still works if it is shared or opened in a new tab.
+
 ### `lib/projects.ts`
 
 The featured work. Each project is one object, and the case-study section
@@ -128,15 +141,16 @@ together. A version mismatch between them fails the CSS build with a confusing
 app/
   layout.tsx            fonts, metadata, Open Graph, icons
   page.tsx              composes the sections
+  pricing/page.tsx      the full pricing page — packages, extras, care plans
   globals.css           design tokens and the shared classes
   opengraph-image.tsx   the share card, generated from lib/site.ts
   sitemap.ts robots.ts  generated at build
 components/
   site/     Header, Footer, StructuredData
-  sections/ Hero, Work, Build (services), Process, About, Contact
-  ui/       Logo, SiteMockup, HeroPreview, PeakLines, Reveal, EnquiryForm
+  sections/ Hero, Work, Build (services), Pricing, Process, About, Contact
+  ui/       Logo, SiteMockup, HeroPreview, PeakLines, Reveal, EnquiryForm, ChooseLink
 tests/      site.test.mjs — runs against the production build
-lib/        site.ts, projects.ts
+lib/        site.ts, pricing.ts, projects.ts
 public/     brand/ (logo, icons), work/ (screenshots)
 ```
 

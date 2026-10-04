@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { contactHref, nav } from "@/lib/site";
 
@@ -15,6 +16,9 @@ export function Header() {
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState<string>("");
+  /* On the full pricing page, the Pricing item is the current one. */
+  const pathname = usePathname();
+  const current = pathname === "/pricing" ? "/#pricing" : active;
 
   useEffect(() => {
     let last = window.scrollY;
@@ -57,8 +61,8 @@ export function Header() {
           if (entry.isIntersecting) inView.add(entry.target.id);
           else inView.delete(entry.target.id);
         }
-        const current = nav.find((n) => inView.has(n.href.split("#")[1]));
-        setActive(current?.href ?? "");
+        const match = nav.find((n) => inView.has(n.href.split("#")[1]));
+        setActive(match?.href ?? "");
       },
       { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.2, 0.5] },
     );
@@ -102,14 +106,14 @@ export function Header() {
         </a>
 
         {/* -------------------------------------------------- desktop nav -- */}
-        <nav aria-label="Main" className="hidden items-center gap-7 md:flex lg:gap-8">
+        <nav aria-label="Main" className="hidden items-center gap-7 lg:flex xl:gap-8">
           {nav.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              aria-current={active === item.href ? "true" : undefined}
+              aria-current={current === item.href ? "true" : undefined}
               className={`link-underline text-[0.92rem] font-medium transition-colors duration-200 ${
-                active === item.href ? "text-text" : "text-muted hover:text-text"
+                current === item.href ? "text-text" : "text-muted hover:text-text"
               }`}
             >
               {item.label}
@@ -132,7 +136,7 @@ export function Header() {
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="flex size-11 flex-col items-center justify-center gap-[5px] rounded-xl border border-line bg-white/[0.04] transition-colors duration-200 hover:border-line-strong md:hidden"
+            className="flex size-11 flex-col items-center justify-center gap-[5px] rounded-xl border border-line bg-white/[0.04] transition-colors duration-200 hover:border-line-strong lg:hidden"
           >
             <span
               className={`block h-[1.5px] w-4 bg-text transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
@@ -155,7 +159,7 @@ export function Header() {
         /* Closed, the menu is only collapsed visually; inert also takes its
            links out of the tab order and the accessibility tree. */
         inert={!menuOpen}
-        className={`overflow-hidden border-t border-line bg-base/95 backdrop-blur-xl transition-[max-height,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
+        className={`overflow-hidden border-t border-line bg-base/95 backdrop-blur-xl transition-[max-height,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
           menuOpen ? "max-h-[32rem] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
