@@ -28,27 +28,17 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — ${site.tagline}`,
-    template: `%s — ${site.name}`,
+    default: site.title,
+    template: `%s — ${site.legalName}`,
   },
   description: site.description,
   applicationName: site.name,
   authors: [{ name: site.legalName }],
-  keywords: [
-    "web design",
-    "web developer",
-    "business websites",
-    "Perthshire",
-    "Crieff",
-    "Next.js developer",
-    "online ordering",
-    "portfolio",
-  ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: site.legalName,
-    title: `${site.name} — ${site.tagline}`,
+    title: site.title,
     description: site.description,
     url: site.url,
     locale: "en_GB",
@@ -56,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — ${site.tagline}`,
+    title: site.title,
     description: site.description,
   },
   icons: {
@@ -67,6 +57,7 @@ export const metadata: Metadata = {
     apple: "/brand/apple-touch-icon.png",
   },
   robots: { index: true, follow: true },
+  formatDetection: { telephone: false, email: false, address: false },
 };
 
 export const viewport: Viewport = {

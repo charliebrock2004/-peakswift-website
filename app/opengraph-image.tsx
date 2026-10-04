@@ -2,9 +2,8 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { site } from "@/lib/site";
-import { projects } from "@/lib/projects";
 
-export const alt = `${site.legalName} — modern websites for businesses`;
+export const alt = `${site.legalName} — web design in ${site.locality}, ${site.region}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -70,17 +69,17 @@ export default async function OpengraphImage() {
               maxWidth: 940,
             }}
           >
-            Websites that make your business look the part.
+            {site.tagline}
           </span>
           <span style={{ color: "#9aa3bb", fontSize: 27, marginTop: 26, maxWidth: 820 }}>
-            Modern, fast websites designed and built from scratch for businesses.
+            Fast, hand-built websites for local businesses — designed and coded from scratch.
           </span>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ width: 64, height: 3, background: "linear-gradient(90deg,#0ECEFB,#0380E3)", display: "flex" }} />
           <span style={{ color: "#6b7490", fontSize: 18, letterSpacing: 2 }}>
-            {projects.map((project) => project.name).join("  ·  ").toUpperCase()}
+            {`WEB DESIGN  ·  ${site.locality.toUpperCase()}, ${site.region.toUpperCase()}`}
           </span>
         </div>
       </div>

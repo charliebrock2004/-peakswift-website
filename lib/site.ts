@@ -8,31 +8,50 @@ export const site = {
   name: "PeakSwift",
   legalName: "PeakSwift Studios",
   tagline: "Websites that make your business look the part.",
+  /* The <title> on the home page: what a searcher needs to see in one line. */
+  title: "PeakSwift Studios — Web Design in Crieff & Perthshire",
   description:
-    "PeakSwift designs and builds modern, fast websites for businesses. Three live sites — WeeJob Joinery, Brock Contracts and Timber & Flame — each built around how that business actually works.",
+    "Fast, hand-built websites for local businesses, designed and coded from scratch by a one-person studio in Crieff, Perthshire. See three live client sites.",
 
-  /* The address enquiries come to. Change this one line to change it sitewide.
-     PLACEHOLDER: currently the Brock Contracts inbox — swap it for a PeakSwift
-     address when there is one. */
-  email: "brockcontracts@gmail.com",
+  /* The address enquiries come to. Every "Start a project" and "Let's build
+     something" button, the enquiry form, the footer and the structured data
+     all read it from here — set it once and it is live everywhere.
+
+     Leave it null until there is a dedicated PeakSwift inbox. While it is
+     null the site shows no address and no mailto link at all; it must never
+     point at another business's inbox as a stand-in. */
+  email: null as string | null,
 
   /* The origin the site is actually served from. Drives the canonical URL,
      Open Graph tags, sitemap.xml and the JSON-LD block. */
   url: "https://peakswift-website-psi.vercel.app",
 
+  locality: "Crieff",
+  region: "Perthshire",
   location: "Crieff, Perthshire — working with clients anywhere",
 
   /* Add links here and they appear in the footer automatically.
      e.g. { label: "Instagram", href: "https://instagram.com/..." } */
   social: [] as { label: string; href: string }[],
-} as const;
+};
 
+/* Root-relative, so the same links work from the 404 page as well as home. */
 export const nav = [
-  { label: "Work", href: "#work" },
-  { label: "What I build", href: "#build" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Work", href: "/#work" },
+  { label: "Services", href: "/#services" },
+  { label: "Process", href: "/#process" },
+  { label: "About", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
 ] as const;
 
-export const mailto = (subject = "New project enquiry") =>
-  `mailto:${site.email}?subject=${encodeURIComponent(subject)}`;
+/* Every project call to action goes to the enquiry section rather than
+   straight to an email client: it explains what to send, and it works for
+   visitors who have no mail app set up. */
+export const contactHref = "/#contact";
+
+export const mailto = (subject = "New project enquiry", body?: string) => {
+  if (!site.email) return null;
+  const params = [`subject=${encodeURIComponent(subject)}`];
+  if (body) params.push(`body=${encodeURIComponent(body)}`);
+  return `mailto:${site.email}?${params.join("&")}`;
+};

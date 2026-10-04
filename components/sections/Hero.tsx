@@ -1,4 +1,4 @@
-import { mailto } from "@/lib/site";
+import { contactHref, site } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { PeakLines } from "@/components/ui/PeakLines";
 import { HeroPreview } from "@/components/ui/HeroPreview";
@@ -34,7 +34,12 @@ export function Hero() {
             className="eyebrow rise"
             style={{ "--rise-delay": "80ms" } as React.CSSProperties}
           >
-            Web design &amp; development
+            <span>
+              Web design &amp; development{" "}
+              <span className="whitespace-nowrap">
+                · {site.locality}, {site.region}
+              </span>
+            </span>
           </p>
 
           <h1
@@ -49,29 +54,17 @@ export function Hero() {
             className="lede rise mt-7 max-w-[34rem]"
             style={{ "--rise-delay": "300ms" } as React.CSSProperties}
           >
-            I&apos;m PeakSwift — a one-person studio designing and building fast,
-            modern websites for businesses. Every site is written from scratch,
-            not dragged out of a template.
+            PeakSwift is a one-person studio designing and building fast, modern
+            websites for local businesses. Every site is written from scratch,
+            not dragged out of a template — and you deal with the person
+            building it.
           </p>
 
           <div
             className="rise mt-9 flex flex-wrap items-center gap-3"
             style={{ "--rise-delay": "420ms" } as React.CSSProperties}
           >
-            <a href="#work" className="btn btn-primary">
-              View my work
-              <svg
-                viewBox="0 0 24 24"
-                className="size-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                aria-hidden="true"
-              >
-                <path d="M12 5v14M5 12l7 7 7-7" />
-              </svg>
-            </a>
-            <a href={mailto()} className="btn btn-ghost">
+            <a href={contactHref} className="btn btn-primary">
               Let&apos;s build something
               <svg
                 viewBox="0 0 24 24"
@@ -84,6 +77,19 @@ export function Hero() {
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
             </a>
+            <a href="#work" className="btn btn-ghost">
+              See the work
+              <svg
+                viewBox="0 0 24 24"
+                className="size-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                aria-hidden="true"
+              >
+                <path d="M12 5v14M5 12l7 7 7-7" />
+              </svg>
+            </a>
           </div>
 
           {/* ------------------------------------------------- fact row --- */}
@@ -92,15 +98,12 @@ export function Hero() {
             style={{ "--rise-delay": "540ms" } as React.CSSProperties}
           >
             {facts.map((f) => (
-              <div key={f.label}>
-                <dt className="sr-only">{f.label}</dt>
-                <dd className="m-0">
-                  <span className="block font-[family-name:var(--font-display)] text-2xl font-semibold tracking-[-0.03em]">
-                    {f.value}
-                  </span>
-                  <span className="mt-1 block font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.16em] text-faint">
-                    {f.label}
-                  </span>
+              /* Shown value-first, but the dt leads in the source so a screen
+                 reader announces each label once, before its value. */
+              <div key={f.label} className="flex flex-col-reverse">
+                <dt className="mono-label mt-1">{f.label}</dt>
+                <dd className="m-0 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-[-0.03em]">
+                  {f.value}
                 </dd>
               </div>
             ))}

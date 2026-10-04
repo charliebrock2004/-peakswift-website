@@ -89,7 +89,7 @@ export function SiteMockup({ project }: { project: Project }) {
       <div className="lg:sticky lg:top-28">
         {/* ------------------------------------------------- toolbar row --- */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <span className="font-[family-name:var(--font-mono)] text-[0.7rem] uppercase tracking-[0.2em] text-faint">
+          <span className="mono-label">
             Live preview
           </span>
 
@@ -112,7 +112,7 @@ export function SiteMockup({ project }: { project: Project }) {
                 type="button"
                 onClick={() => setDevice(d)}
                 aria-pressed={device === d}
-                className={`relative z-10 rounded-full px-3.5 py-1.5 font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.16em] transition-colors duration-200 ${
+                className={`mono-label relative z-10 min-h-9 rounded-full px-3.5 py-1.5 transition-colors duration-200 ${
                   device === d ? "text-text" : "text-faint hover:text-muted"
                 }`}
               >
@@ -221,7 +221,7 @@ export function SiteMockup({ project }: { project: Project }) {
           </div>
         </a>
 
-        <figcaption className="mt-4 text-center font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.18em] text-faint">
+        <figcaption className="mono-label mt-4 text-center">
           {device === "desktop" ? "1440 × 900" : "390 × 844"} · scroll to
           explore
         </figcaption>

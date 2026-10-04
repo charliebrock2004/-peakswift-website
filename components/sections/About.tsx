@@ -44,7 +44,7 @@ export function About() {
                 business instead of whatever template was closest.
               </p>
               <p>
-                All three of the sites above were built end to end that way —
+                Every site above was built end to end that way —
                 design, copy structure, code, hosting, and a plain way for the
                 owner to keep them current.
               </p>
@@ -60,15 +60,12 @@ export function About() {
                 className="bg-base p-7 sm:p-8"
               >
                 <h3 className="flex items-baseline gap-3 font-[family-name:var(--font-display)] text-[1.1rem] font-semibold tracking-[-0.02em]">
-                  <span
-                    className="font-[family-name:var(--font-mono)] text-[0.7rem] font-normal tracking-[0.16em] text-cyan"
-                    aria-hidden="true"
-                  >
+                  <span className="mono-label text-cyan" aria-hidden="true">
                     0{i + 1}
                   </span>
                   {item.title}
                 </h3>
-                <p className="mt-2 pl-[2.1rem] text-[0.92rem] leading-[1.65] text-muted">
+                <p className="mt-2 pl-[2.25rem] text-[0.92rem] leading-[1.65] text-muted">
                   {item.copy}
                 </p>
               </li>

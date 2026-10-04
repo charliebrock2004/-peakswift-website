@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/ui/Logo";
-import { mailto, nav } from "@/lib/site";
+import { contactHref, nav } from "@/lib/site";
 
 /**
  * Fixed header that gets out of the way. It only paints a background once the
@@ -41,7 +41,7 @@ export function Header() {
   /* Highlight the nav item for whichever section is currently in view. */
   useEffect(() => {
     const sections = nav
-      .map((n) => document.querySelector<HTMLElement>(n.href))
+      .map((n) => document.getElementById(n.href.split("#")[1]))
       .filter((el): el is HTMLElement => Boolean(el));
 
     if (!sections.length || !("IntersectionObserver" in window)) return;
@@ -57,7 +57,7 @@ export function Header() {
           if (entry.isIntersecting) inView.add(entry.target.id);
           else inView.delete(entry.target.id);
         }
-        const current = nav.find((n) => inView.has(n.href.slice(1)));
+        const current = nav.find((n) => inView.has(n.href.split("#")[1]));
         setActive(current?.href ?? "");
       },
       { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.2, 0.5] },
@@ -94,15 +94,15 @@ export function Header() {
     >
       <div className="shell flex h-[4.5rem] items-center justify-between gap-4">
         <a
-          href="#top"
+          href="/#top"
           className="shrink-0 rounded-lg transition-opacity duration-200 hover:opacity-80"
-          aria-label="PeakSwift — back to top"
+          aria-label="PeakSwift Studios — home"
         >
           <Logo />
         </a>
 
         {/* -------------------------------------------------- desktop nav -- */}
-        <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-7 md:flex lg:gap-8">
           {nav.map((item) => (
             <a
               key={item.href}
@@ -119,7 +119,7 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <a
-            href={mailto()}
+            href={contactHref}
             className="btn btn-primary hidden min-h-[2.7rem] px-5 text-[0.88rem] sm:inline-flex"
           >
             Start a project
@@ -152,8 +152,11 @@ export function Header() {
       <nav
         id="mobile-nav"
         aria-label="Mobile"
+        /* Closed, the menu is only collapsed visually; inert also takes its
+           links out of the tab order and the accessibility tree. */
+        inert={!menuOpen}
         className={`overflow-hidden border-t border-line bg-base/95 backdrop-blur-xl transition-[max-height,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          menuOpen ? "max-h-[32rem] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <ul className="shell list-none py-2">
@@ -168,7 +171,7 @@ export function Header() {
                   transitionDelay: menuOpen ? `${60 + i * 45}ms` : "0ms",
                 }}
               >
-                <span className="font-[family-name:var(--font-mono)] text-[0.7rem] text-faint">
+                <span className="mono-label" aria-hidden="true">
                   0{i + 1}
                 </span>
                 {item.label}
@@ -177,7 +180,7 @@ export function Header() {
           ))}
           <li className="py-4 sm:hidden">
             <a
-              href={mailto()}
+              href={contactHref}
               onClick={() => setMenuOpen(false)}
               className="btn btn-primary w-full"
             >

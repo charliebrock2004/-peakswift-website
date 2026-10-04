@@ -1,33 +1,32 @@
 import { Logo } from "@/components/ui/Logo";
-import { mailto, nav, site } from "@/lib/site";
+import { contactHref, mailto, nav, site } from "@/lib/site";
 import { projects } from "@/lib/projects";
 
+const linkClass =
+  "link-underline text-[0.92rem] text-muted transition-colors duration-200 hover:text-text";
+
 export function Footer() {
+  const email = mailto();
+
   return (
     <footer className="border-t border-line bg-surface/60">
       <div className="shell py-[clamp(3rem,6vw,4.5rem)]">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)]">
-          <div>
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="sm:col-span-2 lg:col-span-1">
             <Logo />
             <p className="mt-5 max-w-[22rem] text-[0.92rem] leading-[1.65] text-muted">
-              Modern websites designed and built for businesses.
+              Fast, hand-built websites for local businesses — designed and
+              coded from scratch.
             </p>
-            <p className="mt-4 font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.16em] text-faint">
-              {site.location}
-            </p>
+            <p className="mono-label mt-4">{site.location}</p>
           </div>
 
           <nav aria-label="Footer">
-            <h2 className="font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.2em] text-faint">
-              Navigate
-            </h2>
+            <h2 className="mono-label">Navigate</h2>
             <ul className="mt-4 flex list-none flex-col gap-2.5 p-0">
               {nav.map((item) => (
                 <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="link-underline text-[0.92rem] text-muted transition-colors duration-200 hover:text-text"
-                  >
+                  <a href={item.href} className={linkClass}>
                     {item.label}
                   </a>
                 </li>
@@ -36,35 +35,7 @@ export function Footer() {
           </nav>
 
           <div>
-            <h2 className="font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.2em] text-faint">
-              Contact
-            </h2>
-            <ul className="mt-4 flex list-none flex-col gap-2.5 p-0">
-              <li>
-                <a
-                  href={mailto()}
-                  className="link-underline text-[0.92rem] text-muted transition-colors duration-200 hover:text-text"
-                >
-                  {site.email}
-                </a>
-              </li>
-              {site.social.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="link-underline text-[0.92rem] text-muted transition-colors duration-200 hover:text-text"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            <h2 className="mt-8 font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.2em] text-faint">
-              Live work
-            </h2>
+            <h2 className="mono-label">Live work</h2>
             <ul className="mt-4 flex list-none flex-col gap-2.5 p-0">
               {projects.map((project) => (
                 <li key={project.slug}>
@@ -72,9 +43,40 @@ export function Footer() {
                     href={project.live}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="link-underline text-[0.92rem] text-muted transition-colors duration-200 hover:text-text"
+                    className={linkClass}
                   >
                     {project.name}
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="mono-label">Contact</h2>
+            <ul className="mt-4 flex list-none flex-col gap-2.5 p-0">
+              <li>
+                <a href={contactHref} className={linkClass}>
+                  Start a project
+                </a>
+              </li>
+              {email ? (
+                <li>
+                  <a href={email} className={`${linkClass} break-all`}>
+                    {site.email}
+                  </a>
+                </li>
+              ) : null}
+              {site.social.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className={linkClass}
+                  >
+                    {link.label}
                   </a>
                 </li>
               ))}
@@ -83,12 +85,12 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-line pt-7 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.14em] text-faint">
+          <p className="mono-label">
             © {new Date().getFullYear()} {site.legalName}
           </p>
-          <p className="font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.14em] text-faint">
-            Designed &amp; built by PeakSwift
-          </p>
+          <a href="/#top" className="mono-label link-underline hover:text-text">
+            Back to top ↑
+          </a>
         </div>
       </div>
     </footer>

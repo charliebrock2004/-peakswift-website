@@ -10,6 +10,9 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <>
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
       <Header />
       <main
         id="main"
@@ -21,9 +24,14 @@ export default function NotFound() {
           The link may be out of date. The work, and everything else, is on the
           home page.
         </p>
-        <a href="/" className="btn btn-primary mt-9">
-          Back to PeakSwift
-        </a>
+        <div className="mt-9 flex flex-wrap justify-center gap-3">
+          <a href="/" className="btn btn-primary">
+            Back to PeakSwift
+          </a>
+          <a href="/#work" className="btn btn-ghost">
+            See the work
+          </a>
+        </div>
       </main>
       <Footer />
     </>

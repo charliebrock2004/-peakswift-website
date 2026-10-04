@@ -16,13 +16,19 @@ export function StructuredData() {
         alternateName: site.name,
         description: site.description,
         url: site.url,
-        email: site.email,
+        /* Only published once a PeakSwift inbox is configured */
+        ...(site.email ? { email: site.email } : {}),
         image: `${site.url}/brand/icon-512.png`,
-        areaServed: { "@type": "Country", name: "United Kingdom" },
+        logo: `${site.url}/brand/icon-512.png`,
+        areaServed: [
+          { "@type": "City", name: site.locality },
+          { "@type": "AdministrativeArea", name: site.region },
+          { "@type": "Country", name: "United Kingdom" },
+        ],
         address: {
           "@type": "PostalAddress",
-          addressLocality: "Crieff",
-          addressRegion: "Perthshire",
+          addressLocality: site.locality,
+          addressRegion: site.region,
           addressCountry: "GB",
         },
         knowsAbout: [
@@ -57,6 +63,7 @@ export function StructuredData() {
       ...projects.map((project) => ({
         "@type": "CreativeWork",
         name: `${project.name} — website`,
+        image: `${site.url}${project.shots.top.src}`,
         about: project.client,
         url: project.live,
         dateCreated: project.year,

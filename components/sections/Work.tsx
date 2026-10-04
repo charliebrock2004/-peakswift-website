@@ -1,3 +1,4 @@
+import { contactHref } from "@/lib/site";
 import { projects, type Project } from "@/lib/projects";
 import { SiteMockup } from "@/components/ui/SiteMockup";
 
@@ -25,10 +26,10 @@ export function Work() {
             {word} businesses. {word} sites. All live.
           </h2>
           <p className="lede mt-5">
-            Not mockups or concepts — these are running in production. One is
-            built to bring in enquiries, one to show finished work, one to take
-            orders. Scroll through any of them, or open it and judge it
-            properly.
+            Not mockups or concepts — these are real businesses, running in
+            production. One is built to bring in enquiries, one to show
+            finished work, one to take orders. Scroll through any of them, or
+            open it and judge it properly.
           </p>
         </header>
       </div>
@@ -37,6 +38,31 @@ export function Work() {
         {projects.map((project, i) => (
           <CaseStudy key={project.slug} project={project} flip={i % 2 === 1} />
         ))}
+      </div>
+
+      {/* ------------------------------------------------- closing CTA -- */}
+      <div className="shell mt-[clamp(4.5rem,9vw,8rem)]">
+        <div
+          className="flex flex-col gap-6 border-t border-line pt-10 md:flex-row md:items-center md:justify-between"
+          data-reveal
+        >
+          <p className="display-3 max-w-[34rem] font-[family-name:var(--font-display)] font-semibold leading-[1.1]">
+            Want one like these for your business?
+          </p>
+          <a href={contactHref} className="btn btn-primary self-start md:self-auto">
+            Let&apos;s build something
+            <svg
+              viewBox="0 0 24 24"
+              className="size-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </a>
+        </div>
       </div>
     </section>
   );
@@ -77,15 +103,11 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
                 {project.index}
               </span>
               <span className="h-px flex-1 bg-line" aria-hidden="true" />
-              <span className="font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.18em] text-faint">
-                {project.year}
-              </span>
+              <span className="mono-label">{project.year}</span>
             </div>
 
             <h3 className="display-3 mt-7">{project.name}</h3>
-            <p className="mt-2 font-[family-name:var(--font-mono)] text-[0.72rem] uppercase tracking-[0.16em] text-faint">
-              {project.client}
-            </p>
+            <p className="mono-label mt-2">{project.client}</p>
             <p className="mt-4">
               <span
                 className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.16em] text-text"
@@ -143,16 +165,10 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
             </dl>
 
             {/* -------------------------------------------------- stack -- */}
-            <ul className="mt-9 flex list-none flex-wrap gap-2 p-0">
-              {project.stack.map((tech) => (
-                <li
-                  key={tech}
-                  className="rounded-full border border-line bg-white/[0.03] px-3 py-1.5 font-[family-name:var(--font-mono)] text-[0.68rem] uppercase tracking-[0.14em] text-muted"
-                >
-                  {tech}
-                </li>
-              ))}
-            </ul>
+            <p className="mono-label mt-9">
+              <span className="sr-only">Built with: </span>
+              {project.stack.join(" · ")}
+            </p>
 
             {/* --------------------------------------------------- links -- */}
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -163,6 +179,7 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
                 className="btn btn-primary"
               >
                 View live site
+                <span className="sr-only"> (opens in a new tab)</span>
                 <svg
                   viewBox="0 0 24 24"
                   className="size-4"
@@ -185,12 +202,12 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
                     <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
                   </svg>
                   Source code
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </a>
               ) : null}
             </div>
           </div>
 
-          {/* --------------------------------------------------- mockup --- */}
         </div>
       </div>
     </article>

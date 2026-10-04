@@ -19,7 +19,13 @@ npm run dev      # http://localhost:3000
 
 ```sh
 npm run build && npm start   # production build
+npm test                     # builds, then checks the shipped HTML
 ```
+
+`npm test` uses Node's built-in test runner against the prerendered pages: every
+CTA leads to the enquiry section, every `mailto:` goes to the configured
+address, no anchor or asset is broken, the heading outline is clean and the
+SEO tags are present. There are no test dependencies to install.
 
 ## Deploying
 
@@ -43,15 +49,20 @@ touched to change the content.
 Contact address, navigation, location, social links, and the deployed URL.
 
 ```ts
-email: "brockcontracts@gmail.com",   // PLACEHOLDER — swap for the PeakSwift address
+email: null,                         // set to the PeakSwift inbox, e.g. "hello@yourdomain"
 url: "https://peakswift-website-psi.vercel.app", // the live origin — canonical, Open Graph, sitemap
 social: [],                          // add { label, href } and it appears in the footer
 ```
 
-`email` is currently the Brock Contracts inbox, used as a stand-in. It is the
-address behind every "Start a project" button, the contact line in the closing
-panel and the footer, and the one in the structured data — changing this single
-line changes all of them.
+`email` is the one address every enquiry goes to: the enquiry form, the
+"email directly" line under it, the footer and the structured data all read
+it. Every "Start a project" and "Let's build something" button links to the
+enquiry section (`/#contact`) rather than straight to a mail app.
+
+**It is deliberately `null` until there is a dedicated PeakSwift inbox.**
+While it is `null` the site renders no address and no `mailto:` link anywhere,
+and the enquiry panel says the form is on its way. Never point it at another
+business's inbox as a stand-in — `npm test` fails if it does.
 
 ### `lib/projects.ts`
 
@@ -122,8 +133,9 @@ app/
   sitemap.ts robots.ts  generated at build
 components/
   site/     Header, Footer, StructuredData
-  sections/ Hero, Work, Build, About, Contact
-  ui/       Logo, SiteMockup, HeroPreview, PeakLines, Reveal
+  sections/ Hero, Work, Build (services), Process, About, Contact
+  ui/       Logo, SiteMockup, HeroPreview, PeakLines, Reveal, EnquiryForm
+tests/      site.test.mjs — runs against the production build
 lib/        site.ts, projects.ts
 public/     brand/ (logo, icons), work/ (screenshots)
 ```
@@ -133,8 +145,9 @@ public/     brand/ (logo, icons), work/ (screenshots)
 Every colour in `@theme` is sampled from the PeakSwift mark: the deep indigo of
 the card (`#141728`), the cyan of the code brackets (`#0ECEFB`) and the azure of
 the browser frame (`#0380E3`). The accent is rationed deliberately — eyebrow
-rules, one button, the active nav item, the case-study numbers, and nothing
-else. Every text colour is checked to WCAG AA against all three backgrounds.
+rules, the primary button, the active nav item, the case-study numbers, and
+nothing else. Small metadata (years, client lines, captions, footer headings)
+all use the one `.mono-label` class so they match. Every text colour is checked to WCAG AA against all three backgrounds.
 
 ### The scroll-linked preview
 

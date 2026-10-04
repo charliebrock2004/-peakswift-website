@@ -1,16 +1,20 @@
-import { mailto, site } from "@/lib/site";
+import { site } from "@/lib/site";
+import { EnquiryForm } from "@/components/ui/EnquiryForm";
+
+const include = [
+  "What the business does, and where",
+  "What the site needs to do — enquiries, show work, take orders",
+  "Your current site, if there is one",
+  "Any date you are working towards",
+];
 
 export function Contact() {
   return (
     <section id="contact" className="relative py-[var(--section-y)]">
       <div className="shell">
-        <div
-          className="card relative isolate overflow-hidden px-6 py-[clamp(3.5rem,8vw,6.5rem)] text-center sm:px-10"
-          data-reveal
-        >
-          <div className="grid-bg" aria-hidden="true" />
+        <div className="card relative isolate overflow-hidden" data-reveal>
           <div
-            className="glow left-1/2 top-[-6rem] size-[30rem] -translate-x-1/2 bg-azure/30"
+            className="glow left-[-8rem] top-[-8rem] size-[28rem] bg-azure/20"
             aria-hidden="true"
           />
           {/* A single gradient hairline across the top edge */}
@@ -19,42 +23,63 @@ export function Contact() {
             className="absolute inset-x-0 top-0 h-px bg-[image:var(--gradient-brand)]"
           />
 
-          <div className="relative mx-auto max-w-[38rem]">
-            <p className="eyebrow justify-center">Start a project</p>
-            <h2 className="display-2 mt-6">
-              Got a business that deserves a{" "}
-              <span className="grad-text">better website?</span>
-            </h2>
-            <p className="lede mt-6">
-              Tell me what your business does and what the site needs to
-              achieve. I&apos;ll come back with an honest answer on whether I can
-              help, what it would take, and what it would cost.
-            </p>
+          <div className="relative grid gap-[clamp(2.5rem,5vw,4.5rem)] px-5 py-[clamp(3rem,7vw,5.5rem)] sm:px-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-14">
+            {/* ------------------------------------------------ the pitch -- */}
+            <div>
+              <p className="eyebrow">Start a project</p>
+              <h2 className="display-2 mt-6">
+                Got a business that deserves a better website?
+              </h2>
+              <p className="lede mt-6">
+                Tell me what your business does and what the site needs to
+                achieve. I&apos;ll come back with an honest answer on whether I
+                can help, what it would take, and what it would cost.
+              </p>
 
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <a href={mailto()} className="btn btn-primary">
-                Start a project
-                <svg
-                  viewBox="0 0 24 24"
-                  className="size-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
-              </a>
-              <a href="#work" className="btn btn-ghost">
-                See the work again
-              </a>
+              <h3 className="mono-label mt-10">Useful to include</h3>
+              <ul className="mt-4 flex list-none flex-col gap-3 p-0">
+                {include.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-3 text-[0.95rem] leading-[1.55] text-muted"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="mt-[0.3rem] size-3.5 shrink-0 text-cyan"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mono-label mt-10">{site.location}</p>
             </div>
 
-            <p className="mt-8 font-[family-name:var(--font-mono)] text-[0.72rem] uppercase tracking-[0.16em] text-faint">
-              <a href={mailto()} className="link-underline">
-                {site.email}
-              </a>
-            </p>
+            {/* ------------------------------------------------- the form -- */}
+            <div className="rounded-xl border border-line bg-base/70 p-5 sm:p-8">
+              {site.email ? (
+                <EnquiryForm email={site.email} />
+              ) : (
+                /* No PeakSwift inbox is configured yet (lib/site.ts). Say so
+                   plainly rather than show a form that cannot deliver. */
+                <div className="flex h-full flex-col justify-center gap-4 py-6 text-center">
+                  <p className="mono-label">Enquiries</p>
+                  <p className="font-[family-name:var(--font-display)] text-[1.35rem] font-semibold tracking-[-0.025em]">
+                    The enquiry form is on its way.
+                  </p>
+                  <p className="mx-auto max-w-[24rem] text-[0.95rem] leading-[1.65] text-muted">
+                    A dedicated PeakSwift inbox is being set up. Please check
+                    back shortly.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
