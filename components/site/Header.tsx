@@ -11,7 +11,19 @@ import { contactHref, nav } from "@/lib/site";
  * the moment they scroll up — so on a phone the content gets the full screen
  * while the navigation is never more than a flick away.
  */
-export function Header() {
+type NavItem = { label: string; href: string };
+
+/**
+ * `items` and `cta` let a landing page swap in its own navigation and its own
+ * call to action; with neither, the header is the site's standard one.
+ */
+export function Header({
+  items = nav,
+  cta = { label: "Start a project", href: contactHref },
+}: {
+  items?: readonly NavItem[];
+  cta?: NavItem;
+}) {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -44,7 +56,7 @@ export function Header() {
 
   /* Highlight the nav item for whichever section is currently in view. */
   useEffect(() => {
-    const sections = nav
+    const sections = items
       .map((n) => document.getElementById(n.href.split("#")[1]))
       .filter((el): el is HTMLElement => Boolean(el));
 
@@ -61,7 +73,7 @@ export function Header() {
           if (entry.isIntersecting) inView.add(entry.target.id);
           else inView.delete(entry.target.id);
         }
-        const match = nav.find((n) => inView.has(n.href.split("#")[1]));
+        const match = items.find((n) => inView.has(n.href.split("#")[1]));
         setActive(match?.href ?? "");
       },
       { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.2, 0.5] },
@@ -69,7 +81,7 @@ export function Header() {
 
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
-  }, []);
+  }, [items]);
 
   /* Lock the page behind the open mobile menu. */
   useEffect(() => {
@@ -81,7 +93,8 @@ export function Header() {
 
   useEffect(() => {
     if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    const onKey = (e: KeyboardEvent) =>
+      e.key === "Escape" && setMenuOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [menuOpen]);
@@ -106,14 +119,19 @@ export function Header() {
         </a>
 
         {/* -------------------------------------------------- desktop nav -- */}
-        <nav aria-label="Main" className="hidden items-center gap-7 lg:flex xl:gap-8">
-          {nav.map((item) => (
+        <nav
+          aria-label="Main"
+          className="hidden items-center gap-7 lg:flex xl:gap-8"
+        >
+          {items.map((item) => (
             <a
               key={item.href}
               href={item.href}
               aria-current={current === item.href ? "true" : undefined}
               className={`link-underline text-[0.92rem] font-medium transition-colors duration-200 ${
-                current === item.href ? "text-text" : "text-muted hover:text-text"
+                current === item.href
+                  ? "text-text"
+                  : "text-muted hover:text-text"
               }`}
             >
               {item.label}
@@ -123,10 +141,10 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <a
-            href={contactHref}
+            href={cta.href}
             className="btn btn-primary hidden min-h-[2.7rem] px-5 text-[0.88rem] sm:inline-flex"
           >
-            Start a project
+            {cta.label}
           </a>
 
           {/* ------------------------------------------------ menu button -- */}
@@ -164,7 +182,7 @@ export function Header() {
         }`}
       >
         <ul className="shell list-none py-2">
-          {nav.map((item, i) => (
+          {items.map((item, i) => (
             <li key={item.href} className="border-b border-line last:border-0">
               <a
                 href={item.href}
@@ -184,11 +202,11 @@ export function Header() {
           ))}
           <li className="py-4 sm:hidden">
             <a
-              href={contactHref}
+              href={cta.href}
               onClick={() => setMenuOpen(false)}
               className="btn btn-primary w-full"
             >
-              Start a project
+              {cta.label}
             </a>
           </li>
         </ul>

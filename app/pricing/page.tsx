@@ -14,6 +14,7 @@ import {
 import { RevealProvider } from "@/components/ui/Reveal";
 import { lowestPackagePrice } from "@/lib/pricing";
 import { site } from "@/lib/site";
+import { socialMetadata } from "@/lib/seo";
 
 const title = "Website Design Prices for Small Businesses";
 const description = `Affordable small business website design from £${lowestPackagePrice}. Clear prices for websites, extra services and monthly care plans, from a web designer in Crieff, Perthshire.`;
@@ -22,12 +23,11 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/pricing" },
-  openGraph: {
+  ...socialMetadata({
     title: `${title} — ${site.legalName}`,
     description,
-    url: `${site.url}/pricing`,
-  },
-  twitter: { title: `${title} — ${site.legalName}`, description },
+    path: "/pricing",
+  }),
 };
 
 export default function PricingPage() {

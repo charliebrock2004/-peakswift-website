@@ -74,7 +74,10 @@ export function StructuredData() {
                 priceCurrency: "GBP",
                 unitText: "MONTH",
               },
-              itemOffered: { "@type": "Service", name: `Website care — ${c.name}` },
+              itemOffered: {
+                "@type": "Service",
+                name: `Website care — ${c.name}`,
+              },
             })),
           ],
         },

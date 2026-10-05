@@ -24,6 +24,7 @@ const pages = {
   home: read(built, "index.html"),
   notFound: read(built, "_not-found.html"),
   pricing: read(built, "pricing.html"),
+  review: read(built, "free-online-review.html"),
 };
 
 /* The configured enquiry address, read straight from the config file so the
@@ -351,4 +352,128 @@ test("the enquiry address is the PeakSwift inbox and the form is live", () => {
     assert.ok(button && !/disabled/.test(button), `${name}: submit button is disabled`);
     assert.ok(links(html).some((l) => l.href.startsWith("mailto:peakswiftstudio@gmail.com")), `${name}: no mailto link`);
   }
+});
+
+/* ----------------------------------------------- free online review page --- */
+
+const review = pages.review;
+const reviewText = text(review);
+
+test("review: headline, subheadline and primary CTA are as briefed", () => {
+  assert.match(text(review.match(/<h1[\s\S]*?<\/h1>/)[0]), /^\s*Is your business doing enough online\?\s*$/);
+  assert.ok(
+    reviewText.includes("Get a free review of your website, Google presence, social media and overall online visibility — with a clear plan showing what I’d improve and what it could cost."),
+    "subheadline missing or reworded",
+  );
+  const ctas = links(review).filter((l) => /^Get My Free Online Review/.test(l.text));
+  assert.ok(ctas.length >= 5, `expected the CTA throughout the page, found ${ctas.length}`);
+  for (const l of ctas) assert.equal(l.href, "#review", l.text);
+});
+
+test("review: every area, step and deliverable the brief asks for is present", () => {
+  for (const area of [
+    "Your website", "The mobile experience", "Speed and performance", "SEO and Google visibility",
+    "Local search and Google Business Profile", "Reviews and online trust",
+    "Social media and branding", "Calls to action and enquiries",
+  ]) assert.ok(reviewText.includes(area), `review area missing: ${area}`);
+  for (const step of [
+    "Tell me about your business", "I review your online presence", "I identify the opportunities",
+    "I send your personalised plan", "A clear quote, if you want it",
+  ]) assert.ok(reviewText.includes(step), `step missing: ${step}`);
+  for (const item of [
+    "What you’re already doing well", "What’s holding you back", "Your biggest opportunities",
+    "What I’d do first", "A prioritised action plan", "A quote for the work",
+  ]) assert.ok(reviewText.includes(item), `deliverable missing: ${item}`);
+});
+
+test("review: the example report shows the briefed scores, labelled as an example", () => {
+  assert.match(review, /aria-label="Online presence score: 72 out of 100"/);
+  for (const [label, value] of [["Website", 78], ["Google", 61], ["Social media", 74], ["SEO", 58], ["Conversion", 69]]) {
+    assert.match(reviewText, new RegExp(`${label}[^0-9]{0,20}${value}\\s*/100`), `${label} should be ${value}/100`);
+  }
+  assert.match(reviewText, /An example for a fictional business/);
+  assert.match(reviewText, /aren’t an official Google or SEO-tool rating/);
+});
+
+test("review: the example quote uses the real price list", () => {
+  assert.match(reviewText, /Google Business Profile setup\s*£49/);
+  assert.match(reviewText, /Local SEO improvement package\s*From £149/);
+  assert.match(reviewText, /From £198/);
+});
+
+test("review: honest positioning — free, no obligation, and no hype", () => {
+  assert.match(reviewText, /no obligation/i);
+  assert.match(reviewText, /Is the review really free\?/);
+  assert.doesNotMatch(reviewText, /guarantee|10x|10 times|#1|number one|skyrocket|explode/i, "hype or guarantees on the page");
+});
+
+test("review: the form has every briefed field, correctly required", () => {
+  const field = (id) => review.match(new RegExp(`<(?:input|textarea)[^>]*id="${id}"[^>]*>`))?.[0] ?? "";
+  const required = { name: true, business: true, email: true, website: true, type: true, town: true, phone: false, social: false, improve: false };
+  for (const [name, mustRequire] of Object.entries(required)) {
+    const tag = field(`review-${name}`);
+    assert.ok(tag, `missing field ${name}`);
+    assert.match(tag, new RegExp(`name="${name}"`));
+    assert.equal(/\brequired\b/.test(tag), mustRequire, `${name} required should be ${mustRequire}`);
+    assert.match(review, new RegExp(`<label[^>]*for="review-${name}"`), `${name} has no label`);
+  }
+  assert.match(field("review-email"), /type="email"/);
+});
+
+test("review: only mailto is the PeakSwift inbox, and the form has a real submit button", () => {
+  assert.ok(links(review).every((l) => !l.href.startsWith("mailto:") || l.href.startsWith("mailto:peakswiftstudio@gmail.com")));
+  assert.match(review, /<button[^>]*type="submit"[^>]*>/);
+  assert.doesNotMatch(review.match(/<button[^>]*type="submit"[^>]*>/)[0], /disabled/);
+});
+
+test("review: has its own title, description, canonical, social card and sitemap entry", () => {
+  const title = decode(review.match(/<title>([^<]+)<\/title>/)?.[1] ?? "");
+  const description = review.match(/<meta name="description" content="([^"]+)"/)?.[1] ?? "";
+  assert.match(title, /Free Online Business Review/);
+  assert.ok(title.length <= 62, `title ${title.length}: ${title}`);
+  assert.ok(description.length >= 70 && description.length <= 160, `description ${description.length}`);
+  assert.match(review, new RegExp(`<link rel="canonical" href="${siteUrl}/free-online-review"`));
+  for (const tag of ["og:title", "og:description", "og:image", "og:url", "og:site_name"]) {
+    assert.match(review, new RegExp(`property="${tag}"`), tag);
+  }
+  assert.match(review, /name="twitter:image"/);
+  assert.match(read(built, "sitemap.xml.body"), new RegExp(`<loc>${siteUrl}/free-online-review</loc>`));
+});
+
+test("every page except home carries a complete social card", () => {
+  for (const name of ["pricing", "review"]) {
+    for (const tag of ["og:image", "og:site_name", "og:locale", "og:type"]) {
+      assert.match(pages[name], new RegExp(`property="${tag}"`), `${name}: ${tag}`);
+    }
+  }
+});
+
+test("review: reaches the local-search terms naturally", () => {
+  const all = `${reviewText} ${decode(review.match(/<title>([^<]+)<\/title>/)[1])}`.toLowerCase();
+  for (const phrase of ["web design", "local business", "online business review", "seo", "google", "scotland", "perthshire", "perth"]) {
+    assert.ok(all.includes(phrase), `"${phrase}" never appears`);
+  }
+  /* A keyword repeated this often would be stuffing, not writing */
+  assert.ok((all.match(/web design/g) ?? []).length <= 6, "\"web design\" is repeated too often");
+});
+
+test("review: structured data holds a £0 Service and the FAQ", () => {
+  const blocks = [...review.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+  const nodes = blocks.flatMap((b) => b["@graph"]);
+  const service = nodes.find((n) => n["@type"] === "Service" && n.name === "Free Online Business Review");
+  assert.equal(service.offers.price, 0);
+  assert.equal(service.offers.priceCurrency, "GBP");
+  const faq = nodes.find((n) => n["@type"] === "FAQPage");
+  assert.ok(faq.mainEntity.length >= 4);
+});
+
+test("review: the header's call to action stays on this page", () => {
+  const header = review.match(/<header[\s\S]*?<\/header>/)[0];
+  assert.ok(links(header).some((l) => l.text === "Get my free review" && l.href === "#review"));
+  assert.ok(!links(header).some((l) => l.href === "/#contact"), "header sends visitors back to the home page form");
+});
+
+test("the free review is linked from the footer, the sitemap and the home page", () => {
+  assert.ok(links(pages.home).some((l) => l.href === "/free-online-review" && /Free online review/.test(l.text)), "footer link");
+  assert.ok(links(pages.home).some((l) => l.href === "/free-online-review" && /free online review first/i.test(l.text)), "home page link");
 });

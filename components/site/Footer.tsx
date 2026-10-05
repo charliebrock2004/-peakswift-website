@@ -1,6 +1,7 @@
 import { Logo } from "@/components/ui/Logo";
 import { contactHref, mailto, nav, site } from "@/lib/site";
 import { projects } from "@/lib/projects";
+import { reviewPath } from "@/lib/review";
 
 const linkClass =
   "link-underline text-[0.92rem] text-muted transition-colors duration-200 hover:text-text";
@@ -34,6 +35,11 @@ export function Footer() {
               <li>
                 <a href="/pricing" className={linkClass}>
                   Prices &amp; care plans
+                </a>
+              </li>
+              <li>
+                <a href={reviewPath} className={linkClass}>
+                  Free online review
                 </a>
               </li>
             </ul>

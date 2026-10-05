@@ -75,6 +75,20 @@ Every "Choose …" button links to `?package=<slug>#contact` on its own page,
 which preselects that option (with its price) in the enquiry form — no page
 reload, and the link still works if it is shared or opened in a new tab.
 
+### `lib/review.ts`
+
+The copy and data for the free online review landing page at
+`/free-online-review`: headline, the eight review areas, the steps, the FAQ and
+the example report (scores, findings, action plan). The example quote reads its
+prices from `lib/pricing.ts`, so it can never disagree with the price list. The
+page, its structured data and `npm test` all read this file.
+
+The review form works like the enquiry form: it writes the request into an email
+to the address in `lib/site.ts` and opens the visitor's mail app, so the visitor
+still has to press send. The confirmation says so, and offers a copy button for
+people without a mail app. To receive requests without that step, the form needs a
+mail service behind it — see "Receiving enquiries without a mail app" below.
+
 ### `lib/projects.ts`
 
 The featured work. Each project is one object, and the case-study section
@@ -140,15 +154,17 @@ app/
   layout.tsx            fonts, metadata, Open Graph, icons
   page.tsx              composes the sections
   pricing/page.tsx      the full pricing page — packages, extras, care plans
+  free-online-review/   the free online business review landing page
   globals.css           design tokens and the shared classes
   opengraph-image.tsx   the share card, generated from lib/site.ts
   sitemap.ts robots.ts  generated at build
 components/
   site/     Header, Footer, StructuredData
+  review/   the landing page's sections, form and mobile sticky CTA
   sections/ Hero, Work, Build (services), Pricing, Process, About, Contact
   ui/       Logo, SiteMockup, HeroPreview, PeakLines, Reveal, EnquiryForm, ChooseLink
 tests/      site.test.mjs — runs against the production build
-lib/        site.ts, pricing.ts, projects.ts
+lib/        site.ts, pricing.ts, review.ts, seo.ts, projects.ts
 public/     brand/ (logo, icons), work/ (screenshots)
 ```
 
@@ -191,3 +207,15 @@ full. Everything is disabled under `prefers-reduced-motion: reduce`.
 - Clean `h1 → h2 → h3` outline, alt text on every image, skip link, visible
   focus rings, and a keyboard order that matches the visual order on both
   layouts
+
+---
+
+## Receiving enquiries without a mail app
+
+Both forms (`EnquiryForm`, `ReviewForm`) open the visitor's own email app with the
+message written, because there is no server behind them. That is private and needs
+no accounts, but a visitor using webmail or with no mail app set up has to copy the
+request by hand, so some enquiries will be lost. Sending the form to a small route
+handler that emails `site.email` through a transactional-email service (Resend,
+Postmark, SES, or a form service such as Formspree) removes that step. It needs an
+API key stored as a Vercel environment variable, so it is not wired up yet.

@@ -1,4 +1,5 @@
 import { contactHref } from "@/lib/site";
+import { reviewPath } from "@/lib/review";
 
 /* Every line here restates something the site already promises elsewhere —
    nothing about price or timescale is invented. */
@@ -72,7 +73,10 @@ export function Process() {
           ))}
         </ol>
 
-        <div className="mt-[clamp(3rem,6vw,4.5rem)]" data-reveal>
+        <div
+          className="mt-[clamp(3rem,6vw,4.5rem)] flex flex-wrap items-center gap-x-6 gap-y-4"
+          data-reveal
+        >
           <a href={contactHref} className="btn btn-primary">
             Start with step one
             <svg
@@ -85,6 +89,12 @@ export function Process() {
             >
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
+          </a>
+          <a
+            href={reviewPath}
+            className="link-underline text-[0.95rem] font-semibold text-text"
+          >
+            Not ready? Get a free online review first
           </a>
         </div>
       </div>
