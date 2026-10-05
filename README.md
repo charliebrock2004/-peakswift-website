@@ -210,12 +210,18 @@ full. Everything is disabled under `prefers-reduced-motion: reduce`.
 
 ---
 
-## Receiving enquiries without a mail app
+## Receiving enquiries
 
-Both forms (`EnquiryForm`, `ReviewForm`) open the visitor's own email app with the
-message written, because there is no server behind them. That is private and needs
-no accounts, but a visitor using webmail or with no mail app set up has to copy the
-request by hand, so some enquiries will be lost. Sending the form to a small route
-handler that emails `site.email` through a transactional-email service (Resend,
-Postmark, SES, or a form service such as Formspree) removes that step. It needs an
-API key stored as a Vercel environment variable, so it is not wired up yet.
+The home page and pricing enquiry form (`EnquiryForm`) still opens the visitor's
+own email app with the message written, because that form has no server behind it.
+
+The free online review form (`ReviewForm`) does not. It posts to
+`POST /api/free-online-review`, which emails `peakswiftstudio@gmail.com` through
+Resend. The visitor stays on `/free-online-review`. The page only says the
+request was sent after Resend accepts it. `RESEND_API_KEY` is a server
+environment variable and is never sent to the browser. The customer's email is
+the Reply-To address. Until a domain is verified with Resend, the default
+sender is `PeakSwift Studio <onboarding@resend.dev>`, which can only deliver to
+the Resend account's own inbox — sign up with peakswiftstudio@gmail.com, or set
+`REVIEW_FROM_EMAIL` to a verified sender such as
+`PeakSwift Studio <reviews@yourdomain.com>`.

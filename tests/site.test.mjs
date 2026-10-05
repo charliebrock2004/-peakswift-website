@@ -424,6 +424,8 @@ test("review: only mailto is the PeakSwift inbox, and the form has a real submit
   assert.ok(links(review).every((l) => !l.href.startsWith("mailto:") || l.href.startsWith("mailto:peakswiftstudio@gmail.com")));
   assert.match(review, /<button[^>]*type="submit"[^>]*>/);
   assert.doesNotMatch(review.match(/<button[^>]*type="submit"[^>]*>/)[0], /disabled/);
+  assert.doesNotMatch(review, /opens your email app/i);
+  assert.doesNotMatch(review, /mailto:[^"']*Free Online Review request/);
 });
 
 test("review: has its own title, description, canonical, social card and sitemap entry", () => {

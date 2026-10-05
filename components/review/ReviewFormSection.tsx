@@ -60,7 +60,7 @@ export function ReviewFormSection() {
             </div>
 
             <div className="rounded-xl border border-line bg-base/70 p-5 sm:p-8">
-              <ReviewForm email={site.email} />
+              <ReviewForm />
             </div>
           </div>
         </div>

@@ -1,90 +1,76 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { mailto } from "@/lib/site";
 import { reviewCta } from "@/lib/review";
 import { Arrow } from "@/components/review/ReviewCta";
 
-type Request = {
-  name: string;
-  business: string;
-  subject: string;
-  body: string;
-};
+type Status = "idle" | "sending" | "sent" | "error";
+
+const SEND_ERROR = "We couldn't send your review request. Please try again.";
 
 /**
- * The review request form. There is no server behind it: submitting writes
- * the request into an email to the PeakSwift inbox and opens the visitor's own
- * mail app, so nothing is stored and nothing goes anywhere else.
- *
- * That means the visitor still has to press send, and some people have no mail
- * app set up. So the confirmation says exactly that, and offers the address
- * and a copy button instead — it never claims the request has been delivered.
+ * Posts the review request to the site and stays on this page.
+ * The success state is shown only after the server accepts the email.
  */
-export function ReviewForm({ email }: { email: string | null }) {
-  const [request, setRequest] = useState<Request | null>(null);
-  const [copied, setCopied] = useState(false);
+export function ReviewForm() {
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
   const confirmRef = useRef<HTMLHeadingElement>(null);
 
-  /* Move focus to the confirmation so it is announced and in view. */
   useEffect(() => {
-    if (request) confirmRef.current?.focus();
-  }, [request]);
+    if (status === "sent") confirmRef.current?.focus();
+  }, [status]);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (status === "sending") return;
     const data = new FormData(e.currentTarget);
     const get = (key: string) => String(data.get(key) ?? "").trim();
 
-    const name = get("name");
-    const business = get("business");
-    const social = get("social").replace(/\s*\n\s*/g, ", ");
-    const details = [
-      `Name: ${name}`,
-      `Business: ${business}`,
-      `Email: ${get("email")}`,
-      get("phone") ? `Phone: ${get("phone")}` : "",
-      `Website: ${get("website")}`,
-      social ? `Social media: ${social}` : "",
-      `Business type: ${get("type")}`,
-      `Town/city: ${get("town")}`,
-    ].filter(Boolean);
-    const body = [
-      "Free Online Business Review request",
-      "",
-      ...details,
-      "",
-      "What I'd most like to improve:",
-      get("improve") || "(not specified)",
-    ].join("\n");
-    const subject = `Free Online Review request — ${business}`;
-
-    const href = mailto(subject, body);
-    if (!href) return;
-    setRequest({ name, business, subject, body });
-    window.location.href = href;
-  }
-
-  async function copy() {
-    if (!request || !email) return;
+    setStatus("sending");
+    setError("");
     try {
-      await navigator.clipboard.writeText(
-        `To: ${email}\nSubject: ${request.subject}\n\n${request.body}`,
-      );
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2500);
+      const res = await fetch("/api/free-online-review", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: get("name"),
+          business: get("business"),
+          email: get("email"),
+          phone: get("phone"),
+          website: get("website"),
+          social: get("social"),
+          type: get("type"),
+          town: get("town"),
+          improve: get("improve"),
+        }),
+      });
+      const json = (await res.json().catch(() => null)) as {
+        ok?: boolean;
+        error?: string;
+      } | null;
+      if (!res.ok || !json?.ok) {
+        setStatus("error");
+        setError(json?.error || SEND_ERROR);
+        return;
+      }
+      setStatus("sent");
     } catch {
-      /* Clipboard blocked — the address is shown for typing instead. */
+      setStatus("error");
+      setError(SEND_ERROR);
     }
   }
 
-  const firstName = request?.name.split(/\s+/)[0];
+  const sent = status === "sent";
 
   return (
     <div>
       {/* ------------------------------------------------- confirmation --- */}
-      <div hidden={!request} role="status" aria-live="polite">
-        {request ? (
+      <div hidden={!sent} role="status" aria-live="polite">
+        {sent ? (
           <div className="py-2">
             <span
               aria-hidden="true"
@@ -105,55 +91,14 @@ export function ReviewForm({ email }: { email: string | null }) {
               tabIndex={-1}
               className="mt-5 font-[family-name:var(--font-display)] text-[1.5rem] font-semibold leading-[1.15] tracking-[-0.03em] outline-none"
             >
-              Thanks, {firstName}. One step left.
+              Review request sent! We'll get back to you shortly.
             </h3>
-            <p className="mt-4 text-[0.97rem] leading-[1.7] text-muted">
-              Your email app has opened with your request written in. Press{" "}
-              <strong className="font-semibold text-text">send</strong>, and
-              PeakSwift will review {request.business}&apos;s online presence
-              and get back to you with your findings: what&apos;s working, what
-              isn&apos;t, a prioritised plan and, if you&apos;d like help, a
-              clear quote. There&apos;s no obligation to buy anything.
-            </p>
-
-            <div className="mt-7 border-t border-line pt-6">
-              <p className="mono-label">Nothing opened?</p>
-              <p className="mt-3 text-[0.92rem] leading-[1.6] text-muted">
-                If you use webmail, or have no email app set up, copy your
-                request and send it to{" "}
-                <a
-                  href={mailto() ?? undefined}
-                  className="link-underline inline-block font-medium text-text"
-                >
-                  {email}
-                </a>
-                .
-              </p>
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={copy}
-                  className="btn btn-ghost min-h-[2.7rem] px-5 text-[0.88rem]"
-                >
-                  <span aria-live="polite">
-                    {copied ? "Copied" : "Copy my request"}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRequest(null)}
-                  className="mono-label rounded-full px-3 py-2 transition-colors duration-200 hover:text-text"
-                >
-                  Edit my details
-                </button>
-              </div>
-            </div>
           </div>
         ) : null}
       </div>
 
       {/* ----------------------------------------------------------- form --- */}
-      <div hidden={!!request}>
+      <div hidden={sent}>
         <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="review-name" className="field-label">
@@ -278,13 +223,25 @@ export function ReviewForm({ email }: { email: string | null }) {
           </div>
 
           <div className="sm:col-span-2">
-            <button type="submit" className="btn btn-primary w-full sm:w-auto">
-              {reviewCta}
+            <button
+              type="submit"
+              className="btn btn-primary w-full sm:w-auto"
+              disabled={status === "sending"}
+              aria-busy={status === "sending"}
+            >
+              {status === "sending" ? "Sending…" : reviewCta}
               <Arrow />
             </button>
+            {status === "error" ? (
+              <p
+                role="alert"
+                className="mt-4 text-[0.92rem] font-medium leading-[1.6] text-text"
+              >
+                {error}
+              </p>
+            ) : null}
             <p className="mt-4 text-[0.82rem] leading-[1.6] text-faint">
-              Free, with no obligation to buy anything. This opens your email
-              app with your request written, ready to send.
+              Free, with no obligation to buy anything.
             </p>
           </div>
         </form>
