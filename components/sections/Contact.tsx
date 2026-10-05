@@ -1,4 +1,5 @@
 import { site } from "@/lib/site";
+import { reviewPath } from "@/lib/review";
 import { EnquiryForm } from "@/components/ui/EnquiryForm";
 
 const include = [
@@ -35,6 +36,16 @@ export function Contact() {
                 Tell me what your business does and what the site needs to
                 achieve. I&apos;ll come back with an honest answer on whether I
                 can help, what it would take, and what it would cost.
+              </p>
+
+              <p className="mt-6 max-w-[34rem] text-[0.98rem] leading-[1.6] text-muted">
+                Want us to look at your current online presence?{" "}
+                <a
+                  href={reviewPath}
+                  className="link-underline font-semibold text-text"
+                >
+                  Get a free review
+                </a>
               </p>
 
               <h3 className="mono-label mt-10">Useful to include</h3>

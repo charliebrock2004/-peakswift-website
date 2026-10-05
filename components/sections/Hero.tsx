@@ -1,4 +1,5 @@
 import { contactHref, site } from "@/lib/site";
+import { reviewPath } from "@/lib/review";
 import { projects } from "@/lib/projects";
 import { gbp, lowestPackagePrice } from "@/lib/pricing";
 import { PeakLines } from "@/components/ui/PeakLines";
@@ -9,6 +10,25 @@ const facts = [
   { value: String(projects.length), label: "Live client sites" },
   { value: "1:1", label: "You deal with me" },
 ];
+
+function Arrow({ down = false }: { down?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="size-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      aria-hidden="true"
+    >
+      {down ? (
+        <path d="M12 5v14M5 12l7 7 7-7" />
+      ) : (
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      )}
+    </svg>
+  );
+}
 
 export function Hero() {
   return (
@@ -62,41 +82,37 @@ export function Hero() {
           </p>
 
           <div
-            className="rise mt-9 flex flex-wrap items-center gap-3"
+            className="rise mt-9"
             style={{ "--rise-delay": "420ms" } as React.CSSProperties}
           >
-            <a href={contactHref} className="btn btn-primary">
-              Let&apos;s build something
-              <svg
-                viewBox="0 0 24 24"
-                className="size-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                aria-hidden="true"
+            <div className="flex flex-wrap items-center gap-3">
+              <a href={reviewPath} className="btn btn-primary">
+                Get a Free Online Review
+                <Arrow />
+              </a>
+              <a href="#pricing" className="btn btn-ghost">
+                View pricing
+              </a>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+              <a
+                href={contactHref}
+                className="inline-flex min-h-12 items-center gap-2 text-[0.95rem] font-semibold text-muted transition-colors duration-200 hover:text-text"
               >
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
-            </a>
-            <a href="#pricing" className="btn btn-ghost">
-              View pricing
-            </a>
-            <a
-              href="#work"
-              className="ml-1 inline-flex min-h-[3rem] items-center gap-2 text-[0.95rem] font-semibold text-muted transition-colors duration-200 hover:text-text"
-            >
-              See the work
-              <svg
-                viewBox="0 0 24 24"
-                className="size-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                aria-hidden="true"
+                Let's build something
+                <Arrow />
+              </a>
+              <a
+                href="#work"
+                className="inline-flex min-h-12 items-center gap-2 text-[0.95rem] font-semibold text-muted transition-colors duration-200 hover:text-text"
               >
-                <path d="M12 5v14M5 12l7 7 7-7" />
-              </svg>
-            </a>
+                See the work
+                <Arrow down />
+              </a>
+            </div>
+            <p className="mt-3 max-w-[28rem] text-[0.92rem] leading-snug text-muted">
+              Free review of your website, Google presence & social media.
+            </p>
           </div>
 
           {/* ------------------------------------------------- fact row --- */}

@@ -477,3 +477,25 @@ test("the free review is linked from the footer, the sitemap and the home page",
   assert.ok(links(pages.home).some((l) => l.href === "/free-online-review" && /Free online review/.test(l.text)), "footer link");
   assert.ok(links(pages.home).some((l) => l.href === "/free-online-review" && /free online review first/i.test(l.text)), "home page link");
 });
+
+test("home: the free review is the obvious next step, without hiding the project path", () => {
+  const visible = text(pages.home);
+  const header = pages.home.match(/<header[\s\S]*?<\/header>/)[0];
+  const headerLinks = links(header);
+
+  assert.ok(
+    headerLinks.some((l) => l.href === "/free-online-review" && /Free Online Review/.test(l.text)),
+    "header offers the free review",
+  );
+  assert.ok(
+    links(pages.home).some((l) => l.href === "/free-online-review" && l.text === "Get a Free Online Review"),
+    "hero primary CTA",
+  );
+  assert.ok(visible.includes("Free review of your website, Google presence & social media."));
+  assert.ok(
+    links(pages.home).some((l) => l.href === "/free-online-review" && /Get a free review/.test(l.text)),
+    "contact section still points at the review",
+  );
+  assert.ok(links(pages.home).some((l) => l.text === "Start a project" && l.href === "/#contact"));
+});
+

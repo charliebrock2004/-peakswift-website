@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
+import { reviewPath } from "@/lib/review";
 import { contactHref, nav } from "@/lib/site";
 
 /**
@@ -28,9 +29,16 @@ export function Header({
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState<string>("");
+  const headerRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   /* On the full pricing page, the Pricing item is the current one. */
   const pathname = usePathname();
   const current = pathname === "/pricing" ? "/#pricing" : active;
+  /* The review offer sits in the main site nav, not on the review page itself
+     — that page already has its own call to action. */
+  const showReview = items === nav;
+
+  const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
     let last = window.scrollY;
@@ -83,24 +91,56 @@ export function Header({
     return () => observer.disconnect();
   }, [items]);
 
-  /* Lock the page behind the open mobile menu. */
+  /* Lock the page behind the open menu. position:fixed is what actually
+     stops iOS Safari from scrolling the page underneath. */
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    if (!menuOpen) return;
+    const scrollY = window.scrollY;
+    const body = document.body;
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
     return () => {
-      document.body.style.overflow = "";
+      body.style.overflow = "";
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.width = "";
+      window.scrollTo(0, scrollY);
     };
   }, [menuOpen]);
 
   useEffect(() => {
     if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) =>
-      e.key === "Escape" && setMenuOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    const onPointer = (e: PointerEvent) => {
+      if (!headerRef.current?.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
   }, [menuOpen]);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   return (
     <header
+      ref={headerRef}
       className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color,backdrop-filter] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
         hidden ? "-translate-y-full" : "translate-y-0"
       } ${
@@ -140,15 +180,35 @@ export function Header({
         </nav>
 
         <div className="flex items-center gap-2">
-          <a
-            href={cta.href}
-            className="btn btn-primary hidden min-h-[2.7rem] px-5 text-[0.88rem] sm:inline-flex"
-          >
-            {cta.label}
-          </a>
+          {showReview ? (
+            <a
+              href={reviewPath}
+              className="btn btn-primary hidden min-h-[2.7rem] px-5 text-[0.88rem] sm:inline-flex"
+            >
+              Free Online Review
+              <svg
+                viewBox="0 0 24 24"
+                className="size-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </a>
+          ) : (
+            <a
+              href={cta.href}
+              className="btn btn-primary hidden min-h-[2.7rem] px-5 text-[0.88rem] sm:inline-flex"
+            >
+              {cta.label}
+            </a>
+          )}
 
           {/* ------------------------------------------------ menu button -- */}
           <button
+            ref={menuButtonRef}
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
@@ -177,17 +237,19 @@ export function Header({
         /* Closed, the menu is only collapsed visually; inert also takes its
            links out of the tab order and the accessibility tree. */
         inert={!menuOpen}
-        className={`overflow-hidden border-t border-line bg-base/95 backdrop-blur-xl transition-[max-height,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
-          menuOpen ? "max-h-[32rem] opacity-100" : "max-h-0 opacity-0"
+        className={`border-t border-line bg-base/95 backdrop-blur-xl transition-[max-height,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
+          menuOpen
+            ? "max-h-[min(40rem,calc(100dvh-4.5rem-env(safe-area-inset-bottom,0px)))] overflow-y-auto overscroll-contain opacity-100"
+            : "max-h-0 overflow-hidden opacity-0"
         }`}
       >
-        <ul className="shell list-none py-2">
+        <ul className="shell list-none py-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
           {items.map((item, i) => (
             <li key={item.href} className="border-b border-line last:border-0">
               <a
                 href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className="flex items-baseline gap-4 py-4 text-lg font-medium transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                onClick={closeMenu}
+                className="flex min-h-12 items-baseline gap-4 py-3.5 text-lg font-medium transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 style={{
                   transform: menuOpen ? "none" : "translateY(-0.5rem)",
                   transitionDelay: menuOpen ? `${60 + i * 45}ms` : "0ms",
@@ -200,13 +262,39 @@ export function Header({
               </a>
             </li>
           ))}
+          {showReview ? (
+            <li className="border-b border-line">
+              <a
+                href={reviewPath}
+                onClick={closeMenu}
+                className="flex min-h-12 items-center gap-3 py-3.5 text-lg font-medium"
+              >
+                <span className="rounded-full border border-cyan/40 bg-cyan/10 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[0.62rem] font-medium tracking-[0.14em] text-cyan">
+                  FREE
+                </span>
+                Online Review
+              </a>
+            </li>
+          ) : null}
           <li className="py-4 sm:hidden">
             <a
-              href={cta.href}
-              onClick={() => setMenuOpen(false)}
+              href={showReview ? reviewPath : cta.href}
+              onClick={closeMenu}
               className="btn btn-primary w-full"
             >
-              {cta.label}
+              {showReview ? "Get a Free Online Review" : cta.label}
+              {showReview ? (
+                <svg
+                  viewBox="0 0 24 24"
+                  className="size-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              ) : null}
             </a>
           </li>
         </ul>
