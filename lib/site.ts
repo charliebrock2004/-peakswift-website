@@ -18,7 +18,7 @@ export const site = {
 
   /* The origin the site is actually served from. Drives the canonical URL,
      Open Graph tags, sitemap.xml and the JSON-LD block. */
-  url: "https://peakswift-website-psi.vercel.app",
+  url: "https://peakswiftstudio.online",
 
   location: "Crieff, Perthshire — working with clients anywhere",
 
