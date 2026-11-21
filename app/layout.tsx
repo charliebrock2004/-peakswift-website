@@ -80,11 +80,13 @@ export default function RootLayout({
   return (
     <html
       lang="en-GB"
+      suppressHydrationWarning
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         {/* Marks the document as scripted before first paint, so reveal
-            animations only ever hide content that JS can bring back. */}
+            animations only ever hide content that JS can bring back.
+            suppressHydrationWarning on <html> covers the class it adds. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `document.documentElement.classList.add('js')`,

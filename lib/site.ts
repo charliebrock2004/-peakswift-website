@@ -27,11 +27,13 @@ export const site = {
   social: [] as { label: string; href: string }[],
 } as const;
 
+/* Root-relative so they still reach the home page sections from any other
+   route, e.g. the 404 page. */
 export const nav = [
-  { label: "Work", href: "#work" },
-  { label: "What I build", href: "#build" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Work", href: "/#work" },
+  { label: "What I build", href: "/#build" },
+  { label: "About", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
 ] as const;
 
 export const mailto = (subject = "New project enquiry") =>
