@@ -41,7 +41,7 @@ export function Header() {
   /* Highlight the nav item for whichever section is currently in view. */
   useEffect(() => {
     const sections = nav
-      .map((n) => document.querySelector<HTMLElement>(n.href))
+      .map((n) => document.getElementById(n.href.split("#")[1]))
       .filter((el): el is HTMLElement => Boolean(el));
 
     if (!sections.length || !("IntersectionObserver" in window)) return;
@@ -57,7 +57,7 @@ export function Header() {
           if (entry.isIntersecting) inView.add(entry.target.id);
           else inView.delete(entry.target.id);
         }
-        const current = nav.find((n) => inView.has(n.href.slice(1)));
+        const current = nav.find((n) => inView.has(n.href.split("#")[1]));
         setActive(current?.href ?? "");
       },
       { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.2, 0.5] },
@@ -94,7 +94,7 @@ export function Header() {
     >
       <div className="shell flex h-[4.5rem] items-center justify-between gap-4">
         <a
-          href="#top"
+          href="/#top"
           className="shrink-0 rounded-lg transition-opacity duration-200 hover:opacity-80"
           aria-label="PeakSwift — back to top"
         >
